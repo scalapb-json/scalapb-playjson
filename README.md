@@ -23,7 +23,7 @@ There are four functions you can use directly to serialize/deserialize your mess
 
 ```scala
 JsonFormat.toJsonString(msg) // returns String
-JsonFormat.toJson(msg): // returns JsObject
+JsonFormat.toJson(msg) // returns JsObject
 
 JsonFormat.fromJsonString(str) // return MessageType
 JsonFormat.fromJson(json) // return MessageType
