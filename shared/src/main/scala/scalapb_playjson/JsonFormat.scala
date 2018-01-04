@@ -8,6 +8,7 @@ import com.google.protobuf.timestamp.Timestamp
 import com.trueaccord.scalapb._
 import play.api.libs.json._
 import scalapb_json._
+import scalapb_json.ScalapbJsonCommon.unsignedInt
 
 import scala.collection.mutable
 import scala.language.existentials
@@ -174,7 +175,6 @@ class Printer(
   private def defaultJsValue(fd: FieldDescriptor): JsValue =
     serializeSingleValue(fd, scalapb_json.ScalapbJsonCommon.defaultValue(fd), formattingLongAsNumber)
 
-  private def unsignedInt(n: Int): Long = n & 0x00000000FFFFFFFFL
   private def unsignedLong(n: Long) =
     if (n < 0) BigDecimal(BigInt(n & 0x7FFFFFFFFFFFFFFFL).setBit(63)) else BigDecimal(n)
 
