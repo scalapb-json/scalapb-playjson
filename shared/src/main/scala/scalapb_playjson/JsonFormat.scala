@@ -141,7 +141,7 @@ class Printer(
         if (xs.nonEmpty || includingDefaultValueFields) {
           b += JField(
             name,
-            JsArray(xs.map(serializeSingleValue(fd, _, formattingLongAsNumber)).toList))
+            JsArray(xs.map(serializeSingleValue(fd, _, formattingLongAsNumber))))
         }
       case v =>
         if (includingDefaultValueFields ||
@@ -262,7 +262,7 @@ class Parser(
         }
       } else if (fd.isRepeated) {
         value match {
-          case JsArray(vals) => PRepeated(vals.map(parseSingleValue(cmp, fd, _)).toVector)
+          case JsArray(vals) => PRepeated(vals.map(parseSingleValue(cmp, fd, _))(collection.breakOut))
           case _ =>
             throw new JsonFormatException(
               s"Expected an array for repeated field ${serializedName(fd)} of ${fd.containingMessage.name}")
@@ -275,12 +275,12 @@ class Parser(
       case None =>
         value match {
           case JsObject(fields) =>
-            val values: Map[String, JsValue] = fields.map(k => k._1 -> k._2).toMap
+            val values: Map[String, JsValue] = fields.map(k => k._1 -> k._2)(collection.breakOut)
 
             val valueMap: Map[FieldDescriptor, PValue] = (for {
               fd <- cmp.scalaDescriptor.fields
               jsValue <- values.get(serializedName(fd)) if jsValue != JsNull
-            } yield (fd, parseValue(fd, jsValue))).toMap
+            } yield (fd, parseValue(fd, jsValue)))(collection.breakOut)
 
             PMessage(valueMap)
           case _ =>

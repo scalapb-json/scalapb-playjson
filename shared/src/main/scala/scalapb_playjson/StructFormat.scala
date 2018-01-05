@@ -30,12 +30,12 @@ object StructFormat {
 
   def structParser(v: JsValue): struct.Struct = v match {
     case JsObject(fields) =>
-      struct.Struct(fields = fields.map(kv => (kv._1, structValueParser(kv._2))).toMap)
+      struct.Struct(fields = fields.map(kv => (kv._1, structValueParser(kv._2)))(collection.breakOut))
     case _ => throw new JsonFormatException("Expected an object")
   }
 
   def structWriter(v: struct.Struct): JsValue =
-    JsObject(v.fields.mapValues(structValueWriter).toList)
+    JsObject(v.fields.mapValues(structValueWriter))
 
   def listValueParser(v: JsValue): struct.ListValue = v match {
     case JsArray(elems) =>
@@ -44,7 +44,7 @@ object StructFormat {
   }
 
   def listValueWriter(v: struct.ListValue): JsArray =
-    JsArray(v.values.map(structValueWriter).toList)
+    JsArray(v.values.map(structValueWriter))
 
   def nullValueParser(v: JsValue): struct.NullValue = v match {
     case JsNull =>
