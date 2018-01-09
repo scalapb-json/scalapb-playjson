@@ -200,13 +200,35 @@ class Printer(
     case PInt(v) if fd.protoType.isTypeFixed32 => JsNumber(unsignedInt(v))
     case PInt(v) => JsNumber(v)
     case PLong(v) => formatLong(v, fd.protoType, formattingLongAsNumber)
-    case PDouble(v) => JsNumber(v)
-    case PFloat(v) => JsNumber(v)
+    case PDouble(v) =>
+      if(v.isPosInfinity) {
+        JsStringPosInfinity
+      } else if(v.isNegInfinity) {
+        JsStringNegInfinity
+      } else if(java.lang.Double.isNaN(v)) {
+        JsStringNaN
+      } else {
+        JsNumber(v)
+      }
+    case PFloat(v) =>
+      if(v.isPosInfinity) {
+        JsStringPosInfinity
+      } else if(v.isNegInfinity) {
+        JsStringNegInfinity
+      } else if(java.lang.Double.isNaN(v)) {
+        JsStringNaN
+      } else {
+        JsNumber(v)
+      }
     case PBoolean(v) => JsBoolean(v)
     case PString(v) => JsString(v)
     case PByteString(v) => JsString(java.util.Base64.getEncoder.encodeToString(v.toByteArray))
     case _: PMessage | PRepeated(_) | PEmpty => throw new RuntimeException("Should not happen")
   }
+
+  private[this] val JsStringPosInfinity = JsString("Infinity")
+  private[this] val JsStringNegInfinity = JsString("-Infinity")
+  private[this] val JsStringNaN = JsString("NaN")
 }
 
 class Parser(
