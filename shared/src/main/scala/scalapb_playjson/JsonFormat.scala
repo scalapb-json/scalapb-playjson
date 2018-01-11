@@ -200,35 +200,43 @@ class Printer(
     case PInt(v) if fd.protoType.isTypeFixed32 => JsNumber(unsignedInt(v))
     case PInt(v) => JsNumber(v)
     case PLong(v) => formatLong(v, fd.protoType, formattingLongAsNumber)
-    case PDouble(v) =>
-      if(v.isPosInfinity) {
-        JsStringPosInfinity
-      } else if(v.isNegInfinity) {
-        JsStringNegInfinity
-      } else if(java.lang.Double.isNaN(v)) {
-        JsStringNaN
-      } else {
-        JsNumber(v)
-      }
-    case PFloat(v) =>
-      if(v.isPosInfinity) {
-        JsStringPosInfinity
-      } else if(v.isNegInfinity) {
-        JsStringNegInfinity
-      } else if(java.lang.Double.isNaN(v)) {
-        JsStringNaN
-      } else {
-        JsNumber(v)
-      }
+    case PDouble(v) => Printer.doubleToJson(v)
+    case PFloat(v) => Printer.floatToJson(v)
     case PBoolean(v) => JsBoolean(v)
     case PString(v) => JsString(v)
     case PByteString(v) => JsString(java.util.Base64.getEncoder.encodeToString(v.toByteArray))
     case _: PMessage | PRepeated(_) | PEmpty => throw new RuntimeException("Should not happen")
   }
+}
 
+object Printer {
   private[this] val JsStringPosInfinity = JsString("Infinity")
   private[this] val JsStringNegInfinity = JsString("-Infinity")
   private[this] val JsStringNaN = JsString("NaN")
+
+  private[scalapb_playjson] def doubleToJson(value: Double): JsValue = {
+    if (value.isPosInfinity) {
+      JsStringPosInfinity
+    } else if (value.isNegInfinity) {
+      JsStringNegInfinity
+    } else if (java.lang.Double.isNaN(value)) {
+      JsStringNaN
+    } else {
+      JsNumber(value)
+    }
+  }
+
+  private def floatToJson(value: Float): JsValue = {
+    if (value.isPosInfinity) {
+      JsStringPosInfinity
+    } else if (value.isNegInfinity) {
+      JsStringNegInfinity
+    } else if (java.lang.Double.isNaN(value)) {
+      JsStringNaN
+    } else {
+      JsNumber(value)
+    }
+  }
 }
 
 class Parser(
