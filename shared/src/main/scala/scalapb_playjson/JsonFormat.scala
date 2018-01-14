@@ -11,7 +11,6 @@ import scalapb_json._
 import scalapb_json.ScalapbJsonCommon.unsignedInt
 
 import scala.collection.mutable
-import scala.language.existentials
 import scala.reflect.ClassTag
 import _root_.scalapb.descriptors.{Reads => _, _}
 import scalapb_json.ScalapbJsonCommon.GenericCompanion

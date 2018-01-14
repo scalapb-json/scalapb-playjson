@@ -2,7 +2,6 @@ package scalapb_playjson
 
 import com.google.protobuf.any.{Any => PBAny}
 import play.api.libs.json._
-import scala.language.existentials
 import scalapb_json._
 
 object AnyFormat {
