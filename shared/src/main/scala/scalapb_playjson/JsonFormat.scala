@@ -3,6 +3,7 @@ package scalapb_playjson
 import com.google.protobuf.ByteString
 import com.google.protobuf.descriptor.FieldDescriptorProto
 import com.google.protobuf.duration.Duration
+import com.google.protobuf.field_mask.FieldMask
 import com.google.protobuf.struct.NullValue
 import com.google.protobuf.timestamp.Timestamp
 import com.trueaccord.scalapb._
@@ -371,6 +372,14 @@ object JsonFormat {
       (t: Timestamp) => JsString(Timestamps.writeTimestamp(t)), {
         case JsString(str) => Timestamps.parseTimestamp(str)
         case _ => throw new JsonFormatException("Expected a string.")
+      }
+    )
+    .registerWriter(
+      (f: FieldMask) => JsString(ScalapbJsonCommon.fieldMaskToJsonString(f)), {
+        case JsString(str) =>
+          ScalapbJsonCommon.fieldMaskFromJsonString(str)
+        case _ =>
+          throw new JsonFormatException("Expected a string.")
       }
     )
     .registerMessageFormatter[wrappers.DoubleValue](
