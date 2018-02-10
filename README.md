@@ -17,6 +17,10 @@ for scala-js
 libraryDependencies += "io.github.scalapb-json" %%% "scalapb-playjson" % "0.7.0-M2"
 ```
 
+### for ScalaPB 0.6.x
+
+see https://github.com/scalapb-json/scalapb-playjson/tree/0.6.x
+
 ## Usage
 
 There are four functions you can use directly to serialize/deserialize your messages:
