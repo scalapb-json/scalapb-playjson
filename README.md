@@ -17,9 +17,9 @@ for scala-js
 libraryDependencies += "io.github.scalapb-json" %%% "scalapb-playjson" % "0.8.0-M1"
 ```
 
-### for ScalaPB 0.6.x
+### for ScalaPB 0.7.x
 
-see https://github.com/scalapb-json/scalapb-playjson/tree/0.6.x
+see https://github.com/scalapb-json/scalapb-playjson/tree/0.7.x
 
 ## Usage
 
