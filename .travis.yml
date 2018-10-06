@@ -5,6 +5,10 @@ scala:
 - 2.11.12
 - 2.12.7
 jdk: oraclejdk8
+matrix:
+  include:
+  - jdk: openjdk11
+    scala: 2.12.7
 script:
 - sbt "scalafmt::test" "test:scalafmt::test" "sbt:scalafmt::test" "++ ${TRAVIS_SCALA_VERSION}! -v" test
 cache:
