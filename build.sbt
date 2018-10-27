@@ -101,13 +101,13 @@ lazy val commonSettings = Seq[Def.SettingsDefinition](
   Project.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
   PB.targets in Compile := Nil,
   PB.protoSources in Test := Seq(file("shared/src/test/protobuf")),
-  scalapbJsonCommonVersion := "0.3.0",
-  playJsonVersion := "2.6.8",
+  scalapbJsonCommonVersion := "0.3.1",
+  playJsonVersion := "2.6.10",
   libraryDependencies ++= Seq(
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
     "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
-    "org.scalatest" %%% "scalatest" % "3.0.4" % "test"
+    "org.scalatest" %%% "scalatest" % "3.0.5" % "test"
   ),
   pomExtra in Global := {
     <url>https://github.com/scalapb-json/scalapb-playjson</url>
