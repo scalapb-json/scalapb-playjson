@@ -29,10 +29,13 @@ object StructFormat {
   }
 
   def structParser(v: JsValue): struct.Struct = v match {
-    case JsObject(fields) =>
-      struct.Struct(fields = fields.map(kv => (kv._1, structValueParser(kv._2)))(collection.breakOut))
+    case obj: JsObject =>
+      jsObjectToStruct(obj)
     case _ => throw new JsonFormatException("Expected an object")
   }
+
+  def jsObjectToStruct(obj: JsObject): struct.Struct =
+    struct.Struct(fields = obj.fields.map(kv => (kv._1, structValueParser(kv._2)))(collection.breakOut))
 
   def structWriter(v: struct.Struct): JsValue =
     JsObject(v.fields.map{ case (x, y) => (x, structValueWriter(y))})
