@@ -113,8 +113,9 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
       MyTest(
         stringToInt32 = Map("" -> 17),
         intToMytest = Map(0 -> MyTest()),
-        fixed64ToBytes = Map(0L -> com.google.protobuf.ByteString.copyFromUtf8("foobar")))) must be(
-      parse("""|{
+        fixed64ToBytes = Map(0L -> com.google.protobuf.ByteString.copyFromUtf8("foobar"))
+      )
+    ) must be(parse("""|{
                  |  "stringToInt32": {"": 17},
                  |  "intToMytest": {"0": {}},
                  |  "fixed64ToBytes": {"0": "Zm9vYmFy"}
@@ -126,8 +127,9 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
       MyTest3(
         stringToInt32 = Map("" -> 17),
         intToMytest = Map(0 -> MyTest()),
-        fixed64ToBytes = Map(0L -> com.google.protobuf.ByteString.copyFromUtf8("foobar")))) must be(
-      parse("""|{
+        fixed64ToBytes = Map(0L -> com.google.protobuf.ByteString.copyFromUtf8("foobar"))
+      )
+    ) must be(parse("""|{
                  |  "stringToInt32": {"": 17},
                  |  "intToMytest": {"0": {}},
                  |  "fixed64ToBytes": {"0": "Zm9vYmFy"}
@@ -136,21 +138,26 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
 
   "Set treat" should "give correct json" in {
     JsonFormat.toJson(MyTest(trickOrTreat = MyTest.TrickOrTreat.Treat(MyTest()))) must be(
-      parse("""{"treat": {}}"""))
+      parse("""{"treat": {}}""")
+    )
   }
 
   "Parse treat" should "give correct proto with proto2" in {
     JsonFormat.fromJsonString[MyTest]("""{"treat": {"hello": "x"}}""") must be(
-      MyTest(trickOrTreat = MyTest.TrickOrTreat.Treat(MyTest(hello = Some("x")))))
+      MyTest(trickOrTreat = MyTest.TrickOrTreat.Treat(MyTest(hello = Some("x"))))
+    )
     JsonFormat.fromJsonString[MyTest]("""{"treat": {}}""") must be(
-      MyTest(trickOrTreat = MyTest.TrickOrTreat.Treat(MyTest())))
+      MyTest(trickOrTreat = MyTest.TrickOrTreat.Treat(MyTest()))
+    )
   }
 
   "Parse treat" should "give correct proto with proto3" in {
     JsonFormat.fromJsonString[MyTest3]("""{"treat": {"s": "x"}}""") must be(
-      MyTest3(trickOrTreat = MyTest3.TrickOrTreat.Treat(MyTest3(s = "x"))))
+      MyTest3(trickOrTreat = MyTest3.TrickOrTreat.Treat(MyTest3(s = "x")))
+    )
     JsonFormat.fromJsonString[MyTest3]("""{"treat": {}}""") must be(
-      MyTest3(trickOrTreat = MyTest3.TrickOrTreat.Treat(MyTest3())))
+      MyTest3(trickOrTreat = MyTest3.TrickOrTreat.Treat(MyTest3()))
+    )
   }
 
   "JsonFormat" should "encode and decode enums for proto3" in {
@@ -172,7 +179,9 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
     }""") must be(
       jsontest.issue315.Msg(
         baz = "1",
-        someUnion = jsontest.issue315.Msg.SomeUnion.Foo(jsontest.issue315.Foo(cols = "1"))))
+        someUnion = jsontest.issue315.Msg.SomeUnion.Foo(jsontest.issue315.Foo(cols = "1"))
+      )
+    )
   }
 
   "parsing null" should "give default value" in {
@@ -244,7 +253,8 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
 
   "TestProto" should "format int64 as JSON number" in {
     new Printer(formattingLongAsNumber = true).print(MyTest(bazinga = Some(642))) must be(
-      """{"bazinga":642}""")
+      """{"bazinga":642}"""
+    )
   }
 
   "TestProto" should "parse numbers formatted as JSON string" in {
@@ -287,10 +297,12 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
     // sint32
     validateAccepts(
       s"""{"sint":"${Integer.MAX_VALUE}"}""",
-      IntFields(sint = Some(Integer.MAX_VALUE)))
+      IntFields(sint = Some(Integer.MAX_VALUE))
+    )
     validateAccepts(
       s"""{"sint":"${Integer.MIN_VALUE}"}""",
-      IntFields(sint = Some(Integer.MIN_VALUE)))
+      IntFields(sint = Some(Integer.MIN_VALUE))
+    )
     validateRejects(s"""{"sint":"${Integer.MAX_VALUE.toLong + 1}"}""")
     validateRejects(s"""{"sint":"${Integer.MIN_VALUE.toLong - 1}"}""")
 
@@ -315,30 +327,37 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
   "TestProto" should "produce valid JSON output for unsigned integers" in {
     val uint32max: Long = (1L << 32) - 1
     JsonFormat.toJson(IntFields(uint = Some(uint32max.toInt))) must be(
-      parse(s"""{"uint":$uint32max}"""))
+      parse(s"""{"uint":$uint32max}""")
+    )
     JsonFormat.toJson(IntFields(uint = Some(1))) must be(parse(s"""{"uint":1}"""))
     JsonFormat.toJson(IntFields(fixint = Some(uint32max.toInt))) must be(
-      parse(s"""{"fixint":$uint32max}"""))
+      parse(s"""{"fixint":$uint32max}""")
+    )
     JsonFormat.toJson(IntFields(fixint = Some(1))) must be(parse(s"""{"fixint":1}"""))
     val uint64max: BigInt = (BigInt(1) << 64) - 1
     JsonFormat.toJson(IntFields(ulong = Some(uint64max.toLong))) must be(
-      parse(s"""{"ulong":"$uint64max"}"""))
+      parse(s"""{"ulong":"$uint64max"}""")
+    )
     JsonFormat.toJson(IntFields(ulong = Some(1))) must be(parse(s"""{"ulong":"1"}"""))
     JsonFormat.toJson(IntFields(fixlong = Some(uint64max.toLong))) must be(
-      parse(s"""{"fixlong":"$uint64max"}"""))
+      parse(s"""{"fixlong":"$uint64max"}""")
+    )
     JsonFormat.toJson(IntFields(fixlong = Some(1))) must be(parse(s"""{"fixlong":"1"}"""))
   }
 
   "TestProto" should "parse an enum formatted as number" in {
     new Parser().fromJsonString[MyTest]("""{"optEnum":1}""") must be(
-      MyTest(optEnum = Some(MyEnum.V1)))
+      MyTest(optEnum = Some(MyEnum.V1))
+    )
     new Parser().fromJsonString[MyTest]("""{"optEnum":2}""") must be(
-      MyTest(optEnum = Some(MyEnum.V2)))
+      MyTest(optEnum = Some(MyEnum.V2))
+    )
   }
 
   "PreservedTestJson" should "be TestProto when parsed from json" in {
     new Parser(preservingProtoFieldNames = true).fromJsonString[MyTest](PreservedTestJson) must be(
-      TestProto)
+      TestProto
+    )
   }
 
   "DoubleFloatProto" should "parse NaNs" in {
@@ -349,8 +368,8 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
     val out = JsonFormat.fromJsonString[DoubleFloat](i)
     out.d.value.isNaN must be(true)
     out.f.value.isNaN must be(true)
-    (JsonFormat.toJson(out) \ "d") must be (JsDefined(JsString(Double.NaN.toString)))
-    (JsonFormat.toJson(out) \ "f") must be (JsDefined(JsString(Double.NaN.toString)))
+    (JsonFormat.toJson(out) \ "d") must be(JsDefined(JsString(Double.NaN.toString)))
+    (JsonFormat.toJson(out) \ "f") must be(JsDefined(JsString(Double.NaN.toString)))
   }
 
   "DoubleFloatProto" should "parse Infinity" in {
@@ -359,10 +378,10 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
       "f": "Infinity"
     }"""
     val out = JsonFormat.fromJsonString[DoubleFloat](i)
-    out.d.value.isPosInfinity must be (true)
-    out.f.value.isPosInfinity must be (true)
-    (JsonFormat.toJson(out) \ "d") must be (JsDefined(JsString(Double.PositiveInfinity.toString)))
-    (JsonFormat.toJson(out) \ "f") must be (JsDefined(JsString(Double.PositiveInfinity.toString)))
+    out.d.value.isPosInfinity must be(true)
+    out.f.value.isPosInfinity must be(true)
+    (JsonFormat.toJson(out) \ "d") must be(JsDefined(JsString(Double.PositiveInfinity.toString)))
+    (JsonFormat.toJson(out) \ "f") must be(JsDefined(JsString(Double.PositiveInfinity.toString)))
   }
 
   "DoubleFloatProto" should "parse -Infinity" in {
@@ -371,10 +390,10 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues {
       "f": "-Infinity"
     }"""
     val out = JsonFormat.fromJsonString[DoubleFloat](i)
-    out.d.value.isNegInfinity must be (true)
-    out.f.value.isNegInfinity must be (true)
-    (JsonFormat.toJson(out) \ "d") must be (JsDefined(JsString(Double.NegativeInfinity.toString)))
-    (JsonFormat.toJson(out) \ "f") must be (JsDefined(JsString(Double.NegativeInfinity.toString)))
+    out.d.value.isNegInfinity must be(true)
+    out.f.value.isNegInfinity must be(true)
+    (JsonFormat.toJson(out) \ "d") must be(JsDefined(JsString(Double.NegativeInfinity.toString)))
+    (JsonFormat.toJson(out) \ "f") must be(JsDefined(JsString(Double.NegativeInfinity.toString)))
   }
 
   val anyEnabledTypeRegistry = TypeRegistry.empty.addMessageByCompanion(TestProto.companion)

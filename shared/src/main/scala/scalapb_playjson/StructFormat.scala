@@ -35,10 +35,12 @@ object StructFormat {
   }
 
   def jsObjectToStruct(obj: JsObject): struct.Struct =
-    struct.Struct(fields = obj.fields.map(kv => (kv._1, structValueParser(kv._2)))(collection.breakOut))
+    struct.Struct(
+      fields = obj.fields.map(kv => (kv._1, structValueParser(kv._2)))(collection.breakOut)
+    )
 
   def structWriter(v: struct.Struct): JsValue =
-    JsObject(v.fields.map{ case (x, y) => (x, structValueWriter(y))})
+    JsObject(v.fields.map { case (x, y) => (x, structValueWriter(y)) })
 
   def listValueParser(v: JsValue): struct.ListValue = v match {
     case JsArray(elems) =>

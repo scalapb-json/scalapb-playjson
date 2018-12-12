@@ -22,24 +22,27 @@ case class Formatter[T](writer: (Printer, T) => JsValue, parser: (Parser, JsValu
 case class FormatRegistry(
   messageFormatters: Map[Class[_], Formatter[_]] = Map.empty,
   enumFormatters: Map[EnumDescriptor, Formatter[EnumValueDescriptor]] = Map.empty,
-  registeredCompanions: Seq[GenericCompanion] = Seq.empty) {
+  registeredCompanions: Seq[GenericCompanion] = Seq.empty
+) {
 
   def registerMessageFormatter[T <: GeneratedMessage](
     writer: (Printer, T) => JsValue,
-    parser: (Parser, JsValue) => T)(implicit ct: ClassTag[T]): FormatRegistry = {
+    parser: (Parser, JsValue) => T
+  )(implicit ct: ClassTag[T]): FormatRegistry = {
     copy(messageFormatters = messageFormatters + (ct.runtimeClass -> Formatter(writer, parser)))
   }
 
   def registerEnumFormatter[E <: GeneratedEnum](
     writer: (Printer, EnumValueDescriptor) => JsValue,
-    parser: (Parser, JsValue) => EnumValueDescriptor)(
-    implicit cmp: GeneratedEnumCompanion[E]): FormatRegistry = {
+    parser: (Parser, JsValue) => EnumValueDescriptor
+  )(implicit cmp: GeneratedEnumCompanion[E]): FormatRegistry = {
     copy(enumFormatters = enumFormatters + (cmp.scalaDescriptor -> Formatter(writer, parser)))
   }
 
   def registerWriter[T <: GeneratedMessage: ClassTag](
     writer: T => JsValue,
-    parser: JsValue => T): FormatRegistry = {
+    parser: JsValue => T
+  ): FormatRegistry = {
     registerMessageFormatter((p: Printer, t: T) => writer(t), (p: Parser, v: JsValue) => parser(v))
   }
 
@@ -52,12 +55,14 @@ case class FormatRegistry(
   }
 
   def getEnumWriter(
-    descriptor: EnumDescriptor): Option[(Printer, EnumValueDescriptor) => JsValue] = {
+    descriptor: EnumDescriptor
+  ): Option[(Printer, EnumValueDescriptor) => JsValue] = {
     enumFormatters.get(descriptor).map(_.writer)
   }
 
   def getEnumParser(
-    descriptor: EnumDescriptor): Option[(Parser, JsValue) => EnumValueDescriptor] = {
+    descriptor: EnumDescriptor
+  ): Option[(Parser, JsValue) => EnumValueDescriptor] = {
     enumFormatters.get(descriptor).map(_.parser)
   }
 }
@@ -68,7 +73,8 @@ class Printer(
   formattingLongAsNumber: Boolean = false,
   formattingEnumsAsNumber: Boolean = false,
   formatRegistry: FormatRegistry = JsonFormat.DefaultRegistry,
-  val typeRegistry: TypeRegistry = TypeRegistry.empty) {
+  val typeRegistry: TypeRegistry = TypeRegistry.empty
+) {
   def print[A](m: GeneratedMessage): String = {
     toJson(m).toString()
   }
@@ -82,7 +88,8 @@ class Printer(
     fd: FieldDescriptor,
     name: String,
     value: Any,
-    b: FieldBuilder): Unit = {
+    b: FieldBuilder
+  ): Unit = {
     value match {
       case null =>
       // We are never printing empty optional messages to prevent infinite recursion.
@@ -113,7 +120,8 @@ class Printer(
                 serializeSingleValue(
                   valueDescriptor,
                   x.getField(valueDescriptor),
-                  formattingLongAsNumber)
+                  formattingLongAsNumber
+                )
               }
               key -> value
             }(collection.breakOut))
@@ -132,7 +140,8 @@ class Printer(
     fd: FieldDescriptor,
     name: String,
     value: PValue,
-    b: FieldBuilder) = {
+    b: FieldBuilder
+  ) = {
     value match {
       case PEmpty =>
         if (includingDefaultValueFields && fd.containingOneof.isEmpty) {
@@ -140,9 +149,7 @@ class Printer(
         }
       case PRepeated(xs) =>
         if (xs.nonEmpty || includingDefaultValueFields) {
-          b += JField(
-            name,
-            JsArray(xs.map(serializeSingleValue(fd, _, formattingLongAsNumber))))
+          b += JField(name, JsArray(xs.map(serializeSingleValue(fd, _, formattingLongAsNumber))))
         }
       case v =>
         if (includingDefaultValueFields ||
@@ -163,7 +170,8 @@ class Printer(
         val descriptor = m.companion.scalaDescriptor
         b.sizeHint(descriptor.fields.size)
         descriptor.fields.foreach { f =>
-          val name = if (preservingProtoFieldNames) f.name else scalapb_json.ScalapbJsonCommon.jsonName(f)
+          val name =
+            if (preservingProtoFieldNames) f.name else scalapb_json.ScalapbJsonCommon.jsonName(f)
           if (f.protoType.isTypeMessage) {
             serializeMessageField(f, name, m.getFieldByNumber(f.number), b)
           } else {
@@ -175,15 +183,20 @@ class Printer(
   }
 
   private def defaultJsValue(fd: FieldDescriptor): JsValue =
-    serializeSingleValue(fd, scalapb_json.ScalapbJsonCommon.defaultValue(fd), formattingLongAsNumber)
+    serializeSingleValue(
+      fd,
+      scalapb_json.ScalapbJsonCommon.defaultValue(fd),
+      formattingLongAsNumber
+    )
 
   private def unsignedLong(n: Long) =
-    if (n < 0) BigDecimal(BigInt(n & 0x7FFFFFFFFFFFFFFFL).setBit(63)) else BigDecimal(n)
+    if (n < 0) BigDecimal(BigInt(n & 0X7FFFFFFFFFFFFFFFL).setBit(63)) else BigDecimal(n)
 
   private def formatLong(
     n: Long,
     protoType: FieldDescriptorProto.Type,
-    formattingLongAsNumber: Boolean): JsValue = {
+    formattingLongAsNumber: Boolean
+  ): JsValue = {
     val v =
       if (protoType.isTypeUint64 || protoType.isTypeFixed64) unsignedLong(n) else BigDecimal(n)
     if (formattingLongAsNumber) JsNumber(v) else JsString(v.toString())
@@ -192,7 +205,8 @@ class Printer(
   def serializeSingleValue(
     fd: FieldDescriptor,
     value: PValue,
-    formattingLongAsNumber: Boolean): JsValue = value match {
+    formattingLongAsNumber: Boolean
+  ): JsValue = value match {
     case PEnum(e) =>
       formatRegistry.getEnumWriter(e.containingEnum) match {
         case Some(writer) => writer(this, e)
@@ -244,20 +258,24 @@ object Printer {
 class Parser(
   preservingProtoFieldNames: Boolean = false,
   formatRegistry: FormatRegistry = JsonFormat.DefaultRegistry,
-  val typeRegistry: TypeRegistry = TypeRegistry.empty) {
+  val typeRegistry: TypeRegistry = TypeRegistry.empty
+) {
 
-  def fromJsonString[A <: GeneratedMessage with Message[A]](str: String)(
-    implicit cmp: GeneratedMessageCompanion[A]): A = {
+  def fromJsonString[A <: GeneratedMessage with Message[A]](
+    str: String
+  )(implicit cmp: GeneratedMessageCompanion[A]): A = {
     fromJson(Json.parse(str))
   }
 
-  def fromJson[A <: GeneratedMessage with Message[A]](value: JsValue)(
-    implicit cmp: GeneratedMessageCompanion[A]): A = {
+  def fromJson[A <: GeneratedMessage with Message[A]](
+    value: JsValue
+  )(implicit cmp: GeneratedMessageCompanion[A]): A = {
     cmp.messageReads.read(fromJsonToPMessage(cmp, value))
   }
 
   private def serializedName(fd: FieldDescriptor): String = {
-    if (preservingProtoFieldNames) fd.asProto.getName else scalapb_json.ScalapbJsonCommon.jsonName(fd)
+    if (preservingProtoFieldNames) fd.asProto.getName
+    else scalapb_json.ScalapbJsonCommon.jsonName(fd)
   }
 
   private def fromJsonToPMessage(cmp: GeneratedMessageCompanion[_], value: JsValue): PMessage = {
@@ -286,18 +304,24 @@ class Parser(
                     valueDescriptor -> parseSingleValue(
                       cmp.messageCompanionForFieldNumber(fd.number),
                       valueDescriptor,
-                      jValue)))
+                      jValue
+                    )
+                  )
+                )
             }(scala.collection.breakOut))
           case _ =>
             throw new JsonFormatException(
-              s"Expected an object for map field ${serializedName(fd)} of ${fd.containingMessage.name}")
+              s"Expected an object for map field ${serializedName(fd)} of ${fd.containingMessage.name}"
+            )
         }
       } else if (fd.isRepeated) {
         value match {
-          case JsArray(vals) => PRepeated(vals.map(parseSingleValue(cmp, fd, _))(collection.breakOut))
+          case JsArray(vals) =>
+            PRepeated(vals.map(parseSingleValue(cmp, fd, _))(collection.breakOut))
           case _ =>
             throw new JsonFormatException(
-              s"Expected an array for repeated field ${serializedName(fd)} of ${fd.containingMessage.name}")
+              s"Expected an array for repeated field ${serializedName(fd)} of ${fd.containingMessage.name}"
+            )
         }
       } else parseSingleValue(cmp, fd, value)
     }
@@ -328,20 +352,24 @@ class Parser(
           .findValueByNumber(v.toInt)
           .getOrElse(
             throw new JsonFormatException(
-              s"Invalid enum value: ${v.toInt} for enum type: ${enumDescriptor.fullName}"))
+              s"Invalid enum value: ${v.toInt} for enum type: ${enumDescriptor.fullName}"
+            )
+          )
       case JsString(s) =>
         enumDescriptor.values
           .find(_.name == s)
           .getOrElse(throw new JsonFormatException(s"Unrecognized enum value '${s}'"))
       case _ =>
         throw new JsonFormatException(
-          s"Unexpected value ($value) for enum ${enumDescriptor.fullName}")
+          s"Unexpected value ($value) for enum ${enumDescriptor.fullName}"
+        )
     }
 
   protected def parseSingleValue(
     containerCompanion: GeneratedMessageCompanion[_],
     fd: FieldDescriptor,
-    value: JsValue): PValue = fd.scalaType match {
+    value: JsValue
+  ): PValue = fd.scalaType match {
     case ScalaType.Enum(ed) =>
       PEnum(formatRegistry.getEnumParser(ed) match {
         case Some(parser) => parser(this, value)
@@ -355,7 +383,9 @@ class Parser(
         fd.protoType,
         value,
         throw new JsonFormatException(
-          s"Unexpected value ($value) for field ${serializedName(fd)} of ${fd.containingMessage.name}"))
+          s"Unexpected value ($value) for field ${serializedName(fd)} of ${fd.containingMessage.name}"
+        )
+      )
   }
 }
 
@@ -386,59 +416,73 @@ object JsonFormat {
     )
     .registerMessageFormatter[wrappers.DoubleValue](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.DoubleValue])
+      primitiveWrapperParser[wrappers.DoubleValue]
+    )
     .registerMessageFormatter[wrappers.FloatValue](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.FloatValue])
+      primitiveWrapperParser[wrappers.FloatValue]
+    )
     .registerMessageFormatter[wrappers.Int32Value](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.Int32Value])
+      primitiveWrapperParser[wrappers.Int32Value]
+    )
     .registerMessageFormatter[wrappers.Int64Value](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.Int64Value])
+      primitiveWrapperParser[wrappers.Int64Value]
+    )
     .registerMessageFormatter[wrappers.UInt32Value](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.UInt32Value])
+      primitiveWrapperParser[wrappers.UInt32Value]
+    )
     .registerMessageFormatter[wrappers.UInt64Value](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.UInt64Value])
+      primitiveWrapperParser[wrappers.UInt64Value]
+    )
     .registerMessageFormatter[wrappers.BoolValue](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.BoolValue])
+      primitiveWrapperParser[wrappers.BoolValue]
+    )
     .registerMessageFormatter[wrappers.BytesValue](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.BytesValue])
+      primitiveWrapperParser[wrappers.BytesValue]
+    )
     .registerMessageFormatter[wrappers.StringValue](
       primitiveWrapperWriter,
-      primitiveWrapperParser[wrappers.StringValue])
+      primitiveWrapperParser[wrappers.StringValue]
+    )
     .registerEnumFormatter[NullValue](
       (_, _) => JsNull,
       (parser, value) =>
         value match {
           case JsNull => NullValue.NULL_VALUE.scalaValueDescriptor
           case _ => parser.defaultEnumParser(NullValue.scalaDescriptor, value)
-      }
+        }
     )
     .registerWriter[com.google.protobuf.struct.Value](
       StructFormat.structValueWriter,
-      StructFormat.structValueParser)
+      StructFormat.structValueParser
+    )
     .registerWriter[com.google.protobuf.struct.Struct](
       StructFormat.structWriter,
-      StructFormat.structParser)
+      StructFormat.structParser
+    )
     .registerWriter[com.google.protobuf.struct.ListValue](
       StructFormat.listValueWriter,
-      StructFormat.listValueParser)
+      StructFormat.listValueParser
+    )
     .registerMessageFormatter[com.google.protobuf.any.Any](AnyFormat.anyWriter, AnyFormat.anyParser)
 
   def primitiveWrapperWriter[T <: GeneratedMessage with Message[T]](
-    implicit cmp: GeneratedMessageCompanion[T]): ((Printer, T) => JsValue) = {
+    implicit cmp: GeneratedMessageCompanion[T]
+  ): ((Printer, T) => JsValue) = {
     val fieldDesc = cmp.scalaDescriptor.findFieldByNumber(1).get
     (printer, t) =>
       printer.serializeSingleValue(fieldDesc, t.getField(fieldDesc), formattingLongAsNumber = false)
   }
 
   def primitiveWrapperParser[T <: GeneratedMessage with Message[T]](
-    implicit cmp: GeneratedMessageCompanion[T]): ((Parser, JsValue) => T) = {
+    implicit cmp: GeneratedMessageCompanion[T]
+  ): ((Parser, JsValue) => T) = {
     val fieldDesc = cmp.scalaDescriptor.findFieldByNumber(1).get
     (parser, jv) =>
       cmp.messageReads.read(
@@ -448,7 +492,11 @@ object JsonFormat {
               fieldDesc.scalaType,
               fieldDesc.protoType,
               jv,
-              throw new JsonFormatException(s"Unexpected value for ${cmp.scalaDescriptor.name}")))))
+              throw new JsonFormatException(s"Unexpected value for ${cmp.scalaDescriptor.name}")
+            )
+          )
+        )
+      )
   }
 
   val printer = new Printer()
@@ -459,12 +507,14 @@ object JsonFormat {
   def toJson[A <: GeneratedMessage](m: A): JsValue = printer.toJson(m)
 
   def fromJson[A <: GeneratedMessage with Message[A]: GeneratedMessageCompanion](
-    value: JsValue): A = {
+    value: JsValue
+  ): A = {
     parser.fromJson(value)
   }
 
   def fromJsonString[A <: GeneratedMessage with Message[A]: GeneratedMessageCompanion](
-    str: String): A = {
+    str: String
+  ): A = {
     parser.fromJsonString(str)
   }
 
@@ -488,7 +538,8 @@ object JsonFormat {
     scalaType: ScalaType,
     protoType: FieldDescriptorProto.Type,
     value: JsValue,
-    onError: => PValue): PValue = (scalaType, value) match {
+    onError: => PValue
+  ): PValue = (scalaType, value) match {
     case (ScalaType.Int, JsNumber(x)) => PInt(x.intValue)
     case (ScalaType.Int, JsString(x)) if protoType.isTypeInt32 => parseInt32(x)
     case (ScalaType.Int, JsString(x)) if protoType.isTypeSint32 => parseInt32(x)

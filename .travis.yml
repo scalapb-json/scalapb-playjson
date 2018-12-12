@@ -10,7 +10,7 @@ matrix:
   - jdk: openjdk11
     scala: 2.12.8
 script:
-- sbt "scalafmt::test" "test:scalafmt::test" "sbt:scalafmt::test" "++ ${TRAVIS_SCALA_VERSION}! -v" test
+- sbt "scalafmtCheck" "test:scalafmtCheck" "scalafmtSbtCheck" "++ ${TRAVIS_SCALA_VERSION}! -v" test
 cache:
   directories:
   - $HOME/.ivy2/cache

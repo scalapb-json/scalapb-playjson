@@ -17,10 +17,12 @@ trait JavaAssertionsPlatform {
 
   def assertJsonIsSameAsJava[T <: GeneratedMessage with Message[T]](
     v: T,
-    checkRoundtrip: Boolean = true)(implicit cmp: GeneratedMessageCompanion[T]) = {
+    checkRoundtrip: Boolean = true
+  )(implicit cmp: GeneratedMessageCompanion[T]) = {
     val scalaJson = ScalaJsonPrinter.print(v)
     val javaJson = JavaJsonPrinter.print(
-      cmp.asInstanceOf[JavaProtoSupport[T, com.google.protobuf.GeneratedMessageV3]].toJavaProto(v))
+      cmp.asInstanceOf[JavaProtoSupport[T, com.google.protobuf.GeneratedMessageV3]].toJavaProto(v)
+    )
 
     import play.api.libs.json.Json.parse
     parse(scalaJson) must be(parse(javaJson))
@@ -31,7 +33,8 @@ trait JavaAssertionsPlatform {
 
   def javaParse[T <: com.google.protobuf.GeneratedMessageV3.Builder[T]](
     json: String,
-    b: com.google.protobuf.GeneratedMessageV3.Builder[T]) = {
+    b: com.google.protobuf.GeneratedMessageV3.Builder[T]
+  ) = {
     JavaJsonParser.merge(json, b)
     b.build()
   }
