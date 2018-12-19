@@ -102,7 +102,7 @@ lazy val commonSettings = Seq[Def.SettingsDefinition](
   PB.targets in Compile := Nil,
   PB.protoSources in Test := Seq(file("shared/src/test/protobuf")),
   scalapbJsonCommonVersion := "0.3.2",
-  playJsonVersion := "2.6.12",
+  playJsonVersion := "2.6.13",
   libraryDependencies ++= Seq(
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
