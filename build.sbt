@@ -17,11 +17,36 @@ val tagOrHash = Def.setting {
 
 val unusedWarnings = Seq("-Ywarn-unused")
 
+lazy val macros = project
+  .in(file("macros"))
+  .settings(
+    commonSettings,
+    name := UpdateReadme.scalapbPlayJsonMacrosName,
+    libraryDependencies ++= Seq(
+      "io.github.scalapb-json" %%% "scalapb-json-macros" % scalapbJsonCommonVersion.value,
+    ),
+  )
+  .dependsOn(
+    scalapbPlayJsonJVM,
+  )
+
+lazy val tests = crossProject(JVMPlatform, JSPlatform)
+  .in(file("tests"))
+  .settings(
+    commonSettings,
+    noPublish,
+  )
+  .configure(_ dependsOn macros)
+  .dependsOn(
+    scalapbPlayJson % "test->test",
+  )
+
 val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
   .in(file("core"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     commonSettings,
+    name := UpdateReadme.scalapbPlayJsonName,
     mappings in (Compile, packageSrc) ++= (managedSources in Compile).value.map { f =>
       // https://github.com/sbt/sbt-buildinfo/blob/v0.7.0/src/main/scala/sbtbuildinfo/BuildInfoPlugin.scala#L58
       val buildInfoDir = "sbt-buildinfo"
@@ -97,7 +122,6 @@ lazy val commonSettings = Seq[Def.SettingsDefinition](
   description := "Json/Protobuf convertors for ScalaPB",
   licenses += ("MIT", url("https://opensource.org/licenses/MIT")),
   organization := "io.github.scalapb-json",
-  name := UpdateReadme.scalapbPlayJsonName,
   Project.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
   PB.targets in Compile := Nil,
   PB.protoSources in Test := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
