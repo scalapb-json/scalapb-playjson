@@ -10,19 +10,19 @@ Include in your `build.sbt` file
 ### core
 
 ```scala
-libraryDependencies += "io.github.scalapb-json" %% "scalapb-playjson" % "0.10.1"
+libraryDependencies += "io.github.scalapb-json" %% "scalapb-playjson" % "0.11.0-M1"
 ```
 
 for scala-js
 
 ```scala
-libraryDependencies += "io.github.scalapb-json" %%% "scalapb-playjson" % "0.10.1"
+libraryDependencies += "io.github.scalapb-json" %%% "scalapb-playjson" % "0.11.0-M1"
 ```
 
 ### macros
 
 ```scala
-libraryDependencies += "io.github.scalapb-json" %% "scalapb-playjson-macros" % "0.10.1"
+libraryDependencies += "io.github.scalapb-json" %% "scalapb-playjson-macros" % "0.11.0-M1"
 ```
 
 ### for ScalaPB 0.7.x
