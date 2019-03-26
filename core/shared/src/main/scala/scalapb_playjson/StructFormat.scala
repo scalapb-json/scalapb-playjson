@@ -36,7 +36,7 @@ object StructFormat {
 
   def jsObjectToStruct(obj: JsObject): struct.Struct =
     struct.Struct(
-      fields = obj.fields.map(kv => (kv._1, structValueParser(kv._2)))(collection.breakOut)
+      fields = obj.fields.iterator.map(kv => (kv._1, structValueParser(kv._2))).toMap
     )
 
   def structWriter(v: struct.Struct): JsValue =
@@ -44,7 +44,7 @@ object StructFormat {
 
   def listValueParser(v: JsValue): struct.ListValue = v match {
     case JsArray(elems) =>
-      com.google.protobuf.struct.ListValue(elems.map(structValueParser))
+      com.google.protobuf.struct.ListValue(elems.map(structValueParser).toSeq)
     case _ => throw new JsonFormatException("Expected a list")
   }
 

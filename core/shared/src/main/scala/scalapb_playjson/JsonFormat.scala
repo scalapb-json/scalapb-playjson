@@ -104,7 +104,7 @@ class Printer(
           val valueDescriptor = mapEntryDescriptor.findFieldByNumber(2).get
           b += JField(
             name,
-            JsObject(xs.map { x =>
+            JsObject(xs.iterator.map { x =>
               val key = x.getField(keyDescriptor) match {
                 case PBoolean(v) => v.toString
                 case PDouble(v) => v.toString
@@ -124,10 +124,10 @@ class Printer(
                 )
               }
               key -> value
-            }(collection.breakOut))
+            }.toList)
           )
         } else {
-          b += JField(name, JsArray(xs.map(toJson)(collection.breakOut)))
+          b += JField(name, JsArray(xs.iterator.map(toJson).toList))
         }
       case msg: GeneratedMessage =>
         b += JField(name, toJson(msg))
@@ -287,7 +287,7 @@ class Parser(
             val mapEntryDesc = fd.scalaType.asInstanceOf[ScalaType.Message].descriptor
             val keyDescriptor = mapEntryDesc.findFieldByNumber(1).get
             val valueDescriptor = mapEntryDesc.findFieldByNumber(2).get
-            PRepeated(vals.map {
+            PRepeated(vals.iterator.map {
               case (key, jValue) =>
                 val keyObj = keyDescriptor.scalaType match {
                   case ScalaType.Boolean => PBoolean(java.lang.Boolean.valueOf(key))
@@ -308,7 +308,7 @@ class Parser(
                     )
                   )
                 )
-            }(scala.collection.breakOut))
+            }.toVector)
           case _ =>
             throw new JsonFormatException(
               s"Expected an object for map field ${serializedName(fd)} of ${fd.containingMessage.name}"
@@ -317,7 +317,7 @@ class Parser(
       } else if (fd.isRepeated) {
         value match {
           case JsArray(vals) =>
-            PRepeated(vals.map(parseSingleValue(cmp, fd, _))(collection.breakOut))
+            PRepeated(vals.iterator.map(parseSingleValue(cmp, fd, _)).toVector)
           case _ =>
             throw new JsonFormatException(
               s"Expected an array for repeated field ${serializedName(fd)} of ${fd.containingMessage.name}"
@@ -331,12 +331,12 @@ class Parser(
       case None =>
         value match {
           case JsObject(fields) =>
-            val values: Map[String, JsValue] = fields.map(k => k._1 -> k._2)(collection.breakOut)
+            val values: Map[String, JsValue] = fields.iterator.map(k => k._1 -> k._2).toMap
 
             val valueMap: Map[FieldDescriptor, PValue] = (for {
               fd <- cmp.scalaDescriptor.fields
               jsValue <- values.get(serializedName(fd)) if jsValue != JsNull
-            } yield (fd, parseValue(fd, jsValue)))(collection.breakOut)
+            } yield (fd, parseValue(fd, jsValue))).toMap
 
             PMessage(valueMap)
           case _ =>
