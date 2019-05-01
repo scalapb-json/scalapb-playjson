@@ -48,4 +48,12 @@ class JsonFormatSpecJVM extends FlatSpec with MustMatchers with OptionValues {
     anyEnabledParser.fromJsonString[PBAny](javaJson).unpack[MyTest] must be(TestProto)
   }
 
+  "booleans" should "be accepted as string" in {
+    JsonFormat.fromJsonString[MyTest]("""{"optBool": "true"}""") must be(
+      MyTest(optBool = Some(true))
+    )
+    JsonFormat.fromJsonString[MyTest]("""{"optBool": "false"}""") must be(
+      MyTest(optBool = Some(false))
+    )
+  }
 }
