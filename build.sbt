@@ -110,7 +110,7 @@ lazy val commonSettings = Seq[Def.SettingsDefinition](
   unmanagedResources in Compile += (baseDirectory in LocalRootProject).value / "LICENSE.txt",
   resolvers += Opts.resolver.sonatypeReleases,
   scalaVersion := Scala211,
-  crossScalaVersions := Seq("2.12.8", Scala211, "2.13.0-M5"),
+  crossScalaVersions := Seq("2.12.8", Scala211, "2.13.0-RC1"),
   scalacOptions ++= PartialFunction
     .condOpt(CrossVersion.partialVersion(scalaVersion.value)) {
       case Some((2, v)) if v >= 11 => unusedWarnings
@@ -125,13 +125,13 @@ lazy val commonSettings = Seq[Def.SettingsDefinition](
   Project.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
   PB.targets in Compile := Nil,
   PB.protoSources in Test := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
-  scalapbJsonCommonVersion := "0.5.0-M3",
-  playJsonVersion := "2.7.2",
+  scalapbJsonCommonVersion := "0.5.0-M4",
+  playJsonVersion := "2.7.3",
   libraryDependencies ++= Seq(
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
     "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
-    "org.scalatest" %%% "scalatest" % "3.0.7" % "test"
+    "org.scalatest" %%% "scalatest" % "3.0.8-RC2" % "test"
   ),
   pomExtra in Global := {
     <url>https://github.com/scalapb-json/scalapb-playjson</url>
