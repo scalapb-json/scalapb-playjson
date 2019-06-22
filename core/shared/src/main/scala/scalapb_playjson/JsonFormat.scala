@@ -2,6 +2,7 @@ package scalapb_playjson
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.descriptor.FieldDescriptorProto
+import com.google.protobuf.descriptor.FieldDescriptorProto.Type
 import com.google.protobuf.duration.Duration
 import com.google.protobuf.field_mask.FieldMask
 import com.google.protobuf.struct.NullValue
@@ -264,7 +265,13 @@ class Parser(
   def fromJsonString[A <: GeneratedMessage with Message[A]](
     str: String
   )(implicit cmp: GeneratedMessageCompanion[A]): A = {
-    fromJson(Json.parse(str))
+    val j = try {
+      Json.parse(str)
+    } catch {
+      case e: IllegalArgumentException =>
+        throw new JsonFormatException("could not parse json", e)
+    }
+    fromJson(j)
   }
 
   def fromJson[A <: GeneratedMessage with Message[A]](
@@ -377,9 +384,8 @@ class Parser(
       })
     case ScalaType.Message(_) =>
       fromJsonToPMessage(containerCompanion.messageCompanionForFieldNumber(fd.number), value)
-    case st =>
+    case _ =>
       JsonFormat.parsePrimitive(
-        st,
         fd.protoType,
         value,
         throw new JsonFormatException(
@@ -489,7 +495,6 @@ object JsonFormat {
         PMessage(
           Map(
             fieldDesc -> JsonFormat.parsePrimitive(
-              fieldDesc.scalaType,
               fieldDesc.protoType,
               jv,
               throw new JsonFormatException(s"Unexpected value for ${cmp.scalaDescriptor.name}")
@@ -534,35 +539,62 @@ object JsonFormat {
     def writes(obj: T): JsValue = printer.toJson(obj)
   }
 
+  @deprecated("Use parsePrimitive(protoType, value, onError) instead.", "0.9.0")
   def parsePrimitive(
     scalaType: ScalaType,
     protoType: FieldDescriptorProto.Type,
     value: JsValue,
     onError: => PValue
-  ): PValue = (scalaType, value) match {
-    case (ScalaType.Int, JsNumber(x)) => PInt(x.intValue)
-    case (ScalaType.Int, JsString(x)) if protoType.isTypeInt32 => parseInt32(x)
-    case (ScalaType.Int, JsString(x)) if protoType.isTypeSint32 => parseInt32(x)
-    case (ScalaType.Int, JsString(x)) => parseUint32(x)
-    case (ScalaType.Long, JsString(x)) if protoType.isTypeInt64 => parseInt64(x)
-    case (ScalaType.Long, JsString(x)) if protoType.isTypeSint64 => parseInt64(x)
-    case (ScalaType.Long, JsString(x)) => parseUint64(x)
-    case (ScalaType.Long, JsNumber(x)) => PLong(x.toLong)
-    case (ScalaType.Double, JsNumber(x)) => PDouble(x.toDouble)
-    case (ScalaType.Double, JsString("NaN")) => PDouble(Double.NaN)
-    case (ScalaType.Double, JsString("Infinity")) => PDouble(Double.PositiveInfinity)
-    case (ScalaType.Double, JsString("-Infinity")) => PDouble(Double.NegativeInfinity)
-    case (ScalaType.Float, JsNumber(x)) => PFloat(x.toFloat)
-    case (ScalaType.Float, JsString("NaN")) => PFloat(Float.NaN)
-    case (ScalaType.Float, JsString("Infinity")) => PFloat(Float.PositiveInfinity)
-    case (ScalaType.Float, JsString("-Infinity")) => PFloat(Float.NegativeInfinity)
-    case (ScalaType.Boolean, JsBoolean(b)) => PBoolean(b)
-    case (ScalaType.Boolean, JsString("true")) => PBoolean(true)
-    case (ScalaType.Boolean, JsString("false")) => PBoolean(false)
-    case (ScalaType.String, JsString(s)) => PString(s)
-    case (ScalaType.ByteString, JsString(s)) =>
+  ): PValue =
+    parsePrimitive(protoType, value, onError)
+
+  def parsePrimitive(
+    protoType: FieldDescriptorProto.Type,
+    value: JsValue,
+    onError: => PValue
+  ): PValue = (protoType, value) match {
+    case (Type.TYPE_UINT32 | Type.TYPE_FIXED32, JsNumber(x)) =>
+      parseUint32(x.toString)
+    case (Type.TYPE_UINT32 | Type.TYPE_FIXED32, JsString(x)) =>
+      parseUint32(x)
+
+    case (Type.TYPE_SINT32 | Type.TYPE_INT32 | Type.TYPE_SFIXED32, JsNumber(x)) =>
+      parseInt32(x.toString)
+    case (Type.TYPE_SINT32 | Type.TYPE_INT32 | Type.TYPE_SFIXED32, JsString(x)) =>
+      parseInt32(x)
+
+    case (Type.TYPE_UINT64 | Type.TYPE_FIXED64, JsNumber(x)) =>
+      parseUint64(x.toString)
+    case (Type.TYPE_UINT64 | Type.TYPE_FIXED64, JsString(x)) =>
+      parseUint64(x)
+
+    case (Type.TYPE_SINT64 | Type.TYPE_INT64 | Type.TYPE_SFIXED64, JsNumber(x)) =>
+      parseInt64(x.toString)
+    case (Type.TYPE_SINT64 | Type.TYPE_INT64 | Type.TYPE_SFIXED64, JsString(x)) =>
+      parseInt64(x)
+
+    case (Type.TYPE_DOUBLE, JsNumber(x)) =>
+      parseDouble(x.toString)
+    case (Type.TYPE_DOUBLE, JsString(v)) =>
+      parseDouble(v)
+    case (Type.TYPE_FLOAT, JsNumber(x)) =>
+      parseFloat(x.toString)
+    case (Type.TYPE_FLOAT, JsString(v)) =>
+      parseFloat(v)
+
+    case (Type.TYPE_BOOL, JsBoolean(b)) =>
+      PBoolean(b)
+    case (Type.TYPE_BOOL, JsString("true")) =>
+      PBoolean(true)
+    case (Type.TYPE_BOOL, JsString("false")) =>
+      PBoolean(false)
+
+    case (Type.TYPE_STRING, JsString(s)) =>
+      PString(s)
+    case (Type.TYPE_BYTES, JsString(s)) =>
       PByteString(ByteString.copyFrom(java.util.Base64.getDecoder.decode(s)))
-    case _ => onError
+    case _ =>
+      onError
   }
 
 }

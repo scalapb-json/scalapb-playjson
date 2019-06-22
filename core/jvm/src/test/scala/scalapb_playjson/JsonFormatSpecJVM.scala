@@ -6,8 +6,13 @@ import com.google.protobuf.util.{JsonFormat => JavaJsonFormat}
 import com.google.protobuf.any.{Any => PBAny}
 import com.google.protobuf.util.JsonFormat.{TypeRegistry => JavaTypeRegistry}
 import scalapb_json._
+import java.math.BigInteger
 
-class JsonFormatSpecJVM extends FlatSpec with MustMatchers with OptionValues {
+class JsonFormatSpecJVM
+  extends FlatSpec
+  with MustMatchers
+  with OptionValues
+  with JsonFormatSpecBase {
 
   val TestProto = MyTest().update(
     _.hello := "Foo",
@@ -55,5 +60,19 @@ class JsonFormatSpecJVM extends FlatSpec with MustMatchers with OptionValues {
     JsonFormat.fromJsonString[MyTest]("""{"optBool": "false"}""") must be(
       MyTest(optBool = Some(false))
     )
+  }
+
+  "parser" should "reject out of range numeric values" in {
+    val maxLong = new BigInteger(String.valueOf(Long.MaxValue))
+    val minLong = new BigInteger(String.valueOf(Long.MinValue))
+    assertAcceptsNoQuotes("optionalInt64", maxLong.toString)
+    assertAcceptsNoQuotes("optionalInt64", minLong.toString)
+
+    val moreThanOne = new java.math.BigDecimal("1.000001")
+    val maxDouble = new java.math.BigDecimal(Double.MaxValue)
+    val minDouble = new java.math.BigDecimal(-Double.MaxValue)
+    assertAccepts("optionalDouble", minDouble.toString)
+    assertRejects("optionalDouble", maxDouble.multiply(moreThanOne).toString)
+    assertRejects("optionalDouble", minDouble.multiply(moreThanOne).toString)
   }
 }

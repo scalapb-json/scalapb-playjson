@@ -49,6 +49,9 @@ class PrimitiveWrappersSpec extends FlatSpec with MustMatchers {
     JsonFormat.fromJson[Wrapper](render(Map("wDouble" -> JsNumber(3.1)))) must be(
       Wrapper(wDouble = Some(3.1))
     )
+    JsonFormat.fromJson[Wrapper](render(Map("wDouble" -> JsString("3.1")))) must be(
+      Wrapper(wDouble = Some(3.1))
+    )
     JsonFormat.fromJson[Wrapper](render(Map("wFloat" -> JsNumber(3.0)))) must be(
       Wrapper(wFloat = Some(3.0f))
     )
