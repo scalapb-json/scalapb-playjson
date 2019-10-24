@@ -12,6 +12,11 @@ enum MyEnum {
   V2 = 2;
 }
 
+enum MyEnumWithoutDefault {
+  A1 = 1;
+  A2 = 2;
+}
+
 message MyTest {
   optional string hello = 1;
   optional int32 foobar = 2;
@@ -174,4 +179,10 @@ message TestAllTypes {
     string oneof_string = 113;
     bytes oneof_bytes = 114;
   }
+}
+
+message EnumTest {
+  optional MyEnum enum = 1;
+  optional MyEnumWithoutDefault enum_no_default = 2;
+
 }

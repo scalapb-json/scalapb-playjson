@@ -356,8 +356,17 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues with J
     )
   }
 
+  "TestProto" should "parse original field names" in {
+    new Parser().fromJsonString[MyTest]("""{"opt_enum":1}""") must be(
+      MyTest(optEnum = Some(MyEnum.V1))
+    )
+    new Parser().fromJsonString[MyTest]("""{"opt_enum":2}""") must be(
+      MyTest(optEnum = Some(MyEnum.V2))
+    )
+  }
+
   "PreservedTestJson" should "be TestProto when parsed from json" in {
-    new Parser(preservingProtoFieldNames = true).fromJsonString[MyTest](PreservedTestJson) must be(
+    new Parser().fromJsonString[MyTest](PreservedTestJson) must be(
       TestProto
     )
   }
@@ -478,6 +487,13 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues with J
   "formatEnumAsNumber" should "format enums as number" in {
     val p = MyTest().update(_.optEnum := MyEnum.V2)
     new Printer(formattingEnumsAsNumber = true).toJson(p) must be(parse(s"""{"optEnum":2}"""))
+  }
+
+  "unknown fields" should "not get rejected when ignoreUnknownFields is set" in {
+    val parser = new Parser().ignoringUnknownFields
+    parser.fromJsonString[MyTest]("""{"random_field_123": 3}""")
+    // There is special for @type field for anys, lets make sure they get rejected too
+    parser.fromJsonString[MyTest]("""{"@type": "foo"}""")
   }
 
   "FieldMask" should "parse and write" in {

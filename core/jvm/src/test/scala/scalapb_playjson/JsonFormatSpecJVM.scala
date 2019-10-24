@@ -62,6 +62,18 @@ class JsonFormatSpecJVM
     )
   }
 
+  "unknown fields" should "get rejected" in new DefaultParserContext {
+    assertFails("""{"random_field_123": 3}""", MyTest)
+    // There is special for @type field for anys, lets make sure they get rejected too
+    assertFails("""{"@type": "foo"}""", MyTest)
+  }
+
+  "unknown fields" should "not get rejected when ignoreUnknownFields is set" in new IgnoringUnknownParserContext {
+    assertParse("""{"random_field_123": 3}""", MyTest())
+    // There is special for @type field for anys, lets make sure they get rejected too
+    assertParse("""{"@type": "foo"}""", MyTest())
+  }
+
   "parser" should "reject out of range numeric values" in {
     val maxLong = new BigInteger(String.valueOf(Long.MaxValue))
     val minLong = new BigInteger(String.valueOf(Long.MinValue))
