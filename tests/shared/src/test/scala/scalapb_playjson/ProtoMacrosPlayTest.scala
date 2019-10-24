@@ -1,4 +1,4 @@
-package scalapb_json
+package scalapb_playjson
 
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
