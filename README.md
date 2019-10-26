@@ -25,10 +25,6 @@ libraryDependencies += "io.github.scalapb-json" %%% "scalapb-playjson" % "0.12.0
 libraryDependencies += "io.github.scalapb-json" %% "scalapb-playjson-macros" % "0.12.0-M1"
 ```
 
-### for ScalaPB 0.7.x
-
-see https://github.com/scalapb-json/scalapb-playjson/tree/0.7.x
-
 ## Usage
 
 There are four functions you can use directly to serialize/deserialize your messages:
