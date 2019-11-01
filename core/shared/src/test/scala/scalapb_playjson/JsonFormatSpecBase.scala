@@ -30,5 +30,4 @@ trait JsonFormatSpecBase extends JavaAssertions { self: FlatSpec with MustMatche
     assertRejectsNoQuotes(field, value)
     assertRejectsQuotes(field, value)
   }
-
 }

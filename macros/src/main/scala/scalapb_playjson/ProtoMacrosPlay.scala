@@ -8,7 +8,6 @@ import scala.util.Try
 import play.api.libs.json.Json
 
 object ProtoMacrosPlay {
-
   implicit class ProtoContextPlay(private val c: StringContext) extends AnyVal {
     def struct(): com.google.protobuf.struct.Struct =
       macro ProtoMacrosPlay.protoStructInterpolation
@@ -40,7 +39,6 @@ object ProtoMacrosPlay {
 }
 
 class ProtoMacrosPlay(override val c: blackbox.Context) extends scalapb_json.ProtoMacrosCommon(c) {
-
   import c.universe._
 
   override def fromJsonImpl[A: c.WeakTypeTag](json: c.Tree): c.Tree = {

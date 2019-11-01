@@ -13,7 +13,6 @@ import jsontest.custom_collection.{Guitar, Studio}
 import scalapb_json._
 
 class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues with JsonFormatSpecBase {
-
   val TestProto = MyTest().update(
     _.hello := "Foo",
     _.foobar := 37,
@@ -323,7 +322,6 @@ class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues with J
     validateAccepts(s"""{"fixlong":"$uint64max"}""", IntFields(fixlong = Some(uint64max.toLong)))
     validateRejects(s"""{"fixlong":"${uint64max + 1}"}""")
     validateRejects("""{"fixlong":"-1"}""")
-
   }
 
   "TestProto" should "produce valid JSON output for unsigned integers" in {

@@ -83,5 +83,4 @@ class PrimitiveWrappersSpec extends FlatSpec with MustMatchers {
       Wrapper(wBytes = Some(ByteString.EMPTY))
     )
   }
-
 }

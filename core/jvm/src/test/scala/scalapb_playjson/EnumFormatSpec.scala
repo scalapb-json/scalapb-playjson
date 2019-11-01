@@ -6,7 +6,6 @@ import jsontest.test3.MyTest3.MyEnum3
 import org.scalatest.{FlatSpec, MustMatchers}
 
 class EnumFormatSpec extends FlatSpec with MustMatchers with JavaAssertions {
-
   // not ignoring unknown fields:
 
   "default parser" should "match Java behavior for string enums" in new DefaultParserContext {

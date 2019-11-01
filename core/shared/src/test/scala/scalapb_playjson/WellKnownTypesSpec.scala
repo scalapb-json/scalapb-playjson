@@ -7,7 +7,6 @@ import play.api.libs.json.Json.parse
 import org.scalatest.{FlatSpec, MustMatchers}
 
 class WellKnownTypesSpec extends FlatSpec with MustMatchers {
-
   val durationProto = WellKnownTest(duration = Some(Duration(146, 3455)))
 
   "duration" should "serialize and parse correctly" in {

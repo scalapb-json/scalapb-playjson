@@ -25,7 +25,6 @@ case class FormatRegistry(
   enumFormatters: Map[EnumDescriptor, EnumFormatter[EnumValueDescriptor]] = Map.empty,
   registeredCompanions: Seq[GenericCompanion] = Seq.empty
 ) {
-
   def registerMessageFormatter[T <: GeneratedMessage](
     writer: (Printer, T) => JsValue,
     parser: (Parser, JsValue) => T
@@ -398,7 +397,6 @@ class Parser(config: Parser.ParserConfig) {
     value: JsValue,
     skipTypeUrl: Boolean
   ): PMessage = {
-
     def parseValue(fd: FieldDescriptor, value: JsValue): PValue = {
       if (fd.isMapField) {
         value match {

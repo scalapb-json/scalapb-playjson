@@ -15,5 +15,4 @@ trait JavaAssertions extends JavaAssertionsPlatform {
   )
   val ScalaJsonParser = new Parser(typeRegistry = ScalaTypeRegistry)
   val ScalaJsonPrinter = new Printer(typeRegistry = ScalaTypeRegistry)
-
 }

@@ -13,7 +13,6 @@ class JsonFormatSpecJVM
   with MustMatchers
   with OptionValues
   with JsonFormatSpecBase {
-
   val TestProto = MyTest().update(
     _.hello := "Foo",
     _.foobar := 37,

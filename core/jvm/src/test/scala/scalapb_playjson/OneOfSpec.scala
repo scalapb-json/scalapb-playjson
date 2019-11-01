@@ -8,7 +8,6 @@ import org.scalatest.prop._
 import org.scalatest.{FlatSpec, MustMatchers}
 
 class OneOfSpec extends FlatSpec with MustMatchers with TableDrivenPropertyChecks {
-
   val examples = Table(
     ("message", "json"),
     (OneOf.defaultInstance, "{}"),
@@ -36,5 +35,4 @@ class OneOfSpec extends FlatSpec with MustMatchers with TableDrivenPropertyCheck
       )
     )
   }
-
 }
