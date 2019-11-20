@@ -2,7 +2,7 @@ import scalapb.compiler.Version._
 import sbtrelease.ReleaseStateTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-val Scala211 = "2.11.12"
+val Scala212 = "2.12.10"
 val playJsonVersion = settingKey[String]("")
 val scalapbJsonCommonVersion = settingKey[String]("")
 
@@ -16,12 +16,7 @@ val tagOrHash = Def.setting {
 }
 
 val unusedWarnings = Def.setting(
-  CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, 11)) =>
-      Seq("-Ywarn-unused-import")
-    case _ =>
-      Seq("-Ywarn-unused:imports")
-  }
+  Seq("-Ywarn-unused:imports")
 )
 
 lazy val macros = project
@@ -116,8 +111,8 @@ noPublish
 lazy val commonSettings = Def.settings(
   scalapropsCoreSettings,
   unmanagedResources in Compile += (baseDirectory in LocalRootProject).value / "LICENSE.txt",
-  scalaVersion := Scala211,
-  crossScalaVersions := Seq("2.12.10", Scala211, "2.13.1"),
+  scalaVersion := Scala212,
+  crossScalaVersions := Seq(Scala212, "2.13.1"),
   scalacOptions ++= unusedWarnings.value,
   Seq(Compile, Test).flatMap(c => scalacOptions in (c, console) --= unusedWarnings.value),
   scalacOptions ++= Seq("-feature", "-deprecation", "-language:existentials"),
@@ -132,7 +127,7 @@ lazy val commonSettings = Def.settings(
   PB.protocVersion := "-v371",
   PB.protoSources in Test := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
   scalapbJsonCommonVersion := "0.6.0-M2",
-  playJsonVersion := "2.7.4",
+  playJsonVersion := "2.8.0",
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.6.2" % "test",
     "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.3.1" % "test",
