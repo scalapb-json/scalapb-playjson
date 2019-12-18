@@ -16,4 +16,4 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.0")
 
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.27")
 
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.10.0-M1"
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.10.0-M2"
