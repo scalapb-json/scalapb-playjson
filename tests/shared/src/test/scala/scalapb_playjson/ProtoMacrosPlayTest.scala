@@ -1,14 +1,14 @@
 package scalapb_playjson
 
-import org.scalatest.FunSpec
-import org.scalatest.Matchers
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import scalapb_playjson.ProtoMacrosPlay._
 import com.google.protobuf.struct._
 import jsontest.test.MyTest
 
 import scala.util.Success
 
-class ProtoMacrosPlayTest extends FunSpec with Matchers {
+class ProtoMacrosPlayTest extends AnyFunSpec with Matchers {
   describe("ProtoMacrosPlay") {
     it("struct") {
       assert(struct"{}" == Struct.defaultInstance)

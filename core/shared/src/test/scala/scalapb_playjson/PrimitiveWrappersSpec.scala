@@ -4,9 +4,10 @@ import com.google.protobuf.ByteString
 import jsontest.test3._
 import play.api.libs.json._
 import play.api.libs.json.Json.{toJson => render}
-import org.scalatest.{FlatSpec, MustMatchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.must.Matchers
 
-class PrimitiveWrappersSpec extends FlatSpec with MustMatchers {
+class PrimitiveWrappersSpec extends AnyFlatSpec with Matchers {
   "Empty object" should "give empty json for Wrapper" in {
     JsonFormat.toJson(Wrapper()) must be(render(Map.empty[String, JsValue]))
   }

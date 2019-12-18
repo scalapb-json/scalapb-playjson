@@ -1,16 +1,18 @@
 package scalapb_playjson
 
-import org.scalatest.{FlatSpec, MustMatchers, OptionValues}
+import org.scalatest.OptionValues
 import jsontest.test._
 import com.google.protobuf.util.{JsonFormat => JavaJsonFormat}
 import com.google.protobuf.any.{Any => PBAny}
 import com.google.protobuf.util.JsonFormat.{TypeRegistry => JavaTypeRegistry}
 import scalapb_json._
 import java.math.BigInteger
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.must.Matchers
 
 class JsonFormatSpecJVM
-  extends FlatSpec
-  with MustMatchers
+  extends AnyFlatSpec
+  with Matchers
   with OptionValues
   with JsonFormatSpecBase {
   val TestProto = MyTest().update(

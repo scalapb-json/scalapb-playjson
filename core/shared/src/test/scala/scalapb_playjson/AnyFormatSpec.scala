@@ -2,11 +2,12 @@ package scalapb_playjson
 
 import com.google.protobuf.any.{Any => PBAny}
 import jsontest.anytests.{AnyTest, ManyAnyTest}
-import org.scalatest.{FlatSpec, MustMatchers}
 import play.api.libs.json.Json.parse
 import scalapb_json._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.must.Matchers
 
-class AnyFormatSpec extends FlatSpec with MustMatchers with JavaAssertions {
+class AnyFormatSpec extends AnyFlatSpec with Matchers with JavaAssertions {
   val RawExample = AnyTest("test")
 
   val RawJson = parse(s"""{"field":"test"}""")

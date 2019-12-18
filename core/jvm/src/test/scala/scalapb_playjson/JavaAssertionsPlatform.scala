@@ -3,11 +3,12 @@ package scalapb_playjson
 import com.google.protobuf.{GeneratedMessageV3, InvalidProtocolBufferException}
 import com.google.protobuf.util.JsonFormat.{TypeRegistry => JavaTypeRegistry}
 import scalapb.{GeneratedMessage, GeneratedMessageCompanion, JavaProtoSupport, Message}
-import org.scalatest.{Assertion, MustMatchers}
+import org.scalatest.Assertion
 import scalapb_json.JsonFormatException
+import org.scalatest.matchers.must.Matchers
 
 trait JavaAssertionsPlatform {
-  self: MustMatchers with JavaAssertions =>
+  self: Matchers with JavaAssertions =>
 
   def registeredCompanions: Seq[GeneratedMessageCompanion[_]]
 

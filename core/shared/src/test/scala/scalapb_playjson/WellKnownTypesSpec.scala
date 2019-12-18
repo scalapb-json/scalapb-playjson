@@ -4,9 +4,10 @@ import com.google.protobuf.duration.Duration
 import com.google.protobuf.timestamp.Timestamp
 import jsontest.test.WellKnownTest
 import play.api.libs.json.Json.parse
-import org.scalatest.{FlatSpec, MustMatchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.must.Matchers
 
-class WellKnownTypesSpec extends FlatSpec with MustMatchers {
+class WellKnownTypesSpec extends AnyFlatSpec with Matchers {
   val durationProto = WellKnownTest(duration = Some(Duration(146, 3455)))
 
   "duration" should "serialize and parse correctly" in {

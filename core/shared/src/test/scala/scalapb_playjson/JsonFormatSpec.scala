@@ -4,15 +4,17 @@ import java.math.BigInteger
 
 import play.api.libs.json._
 import play.api.libs.json.Json.parse
-import org.scalatest.{Assertion, FlatSpec, MustMatchers, OptionValues}
+import org.scalatest.{Assertion, OptionValues}
 import jsontest.test._
 import jsontest.test3._
 import com.google.protobuf.any.{Any => PBAny}
 import com.google.protobuf.field_mask.FieldMask
 import jsontest.custom_collection.{Guitar, Studio}
 import scalapb_json._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.must.Matchers
 
-class JsonFormatSpec extends FlatSpec with MustMatchers with OptionValues with JsonFormatSpecBase {
+class JsonFormatSpec extends AnyFlatSpec with Matchers with OptionValues with JsonFormatSpecBase {
   val TestProto = MyTest().update(
     _.hello := "Foo",
     _.foobar := 37,

@@ -1,10 +1,11 @@
 package scalapb_playjson
 
-import org.scalatest.{FlatSpec, MustMatchers}
 import scalapb_json.JsonFormatException
 import jsontest.test._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.must.Matchers
 
-trait JsonFormatSpecBase extends JavaAssertions { self: FlatSpec with MustMatchers =>
+trait JsonFormatSpecBase extends JavaAssertions { self: AnyFlatSpec with Matchers =>
 
   def assertAcceptsQuotes(field: String, value: String): Unit = {
     JsonFormat.fromJsonString[TestAllTypes](s"""{"$field": "$value"}""")
