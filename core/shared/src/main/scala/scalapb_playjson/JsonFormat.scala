@@ -365,12 +365,13 @@ class Parser(config: Parser.ParserConfig) {
   def fromJsonString[A <: GeneratedMessage with Message[A]](
     str: String
   )(implicit cmp: GeneratedMessageCompanion[A]): A = {
-    val j = try {
-      Json.parse(str)
-    } catch {
-      case e: IllegalArgumentException =>
-        throw new JsonFormatException("could not parse json", e)
-    }
+    val j =
+      try {
+        Json.parse(str)
+      } catch {
+        case e: IllegalArgumentException =>
+          throw new JsonFormatException("could not parse json", e)
+      }
     fromJson(j)
   }
 
