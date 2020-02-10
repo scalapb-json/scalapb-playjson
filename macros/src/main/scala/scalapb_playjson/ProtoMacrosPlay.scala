@@ -1,6 +1,6 @@
 package scalapb_playjson
 
-import scalapb.{GeneratedMessage, GeneratedMessageCompanion, Message}
+import scalapb.{GeneratedMessage, GeneratedMessageCompanion}
 
 import scala.reflect.macros.blackbox
 import scala.language.experimental.macros
@@ -15,7 +15,7 @@ object ProtoMacrosPlay {
       macro ProtoMacrosPlay.protoValueInterpolation
   }
 
-  implicit class FromJsonPlay[A <: GeneratedMessage with Message[A]](
+  implicit class FromJsonPlay[A <: GeneratedMessage](
     private val companion: GeneratedMessageCompanion[A]
   ) extends AnyVal {
     def fromJsonConstant(json: String): A =
@@ -46,7 +46,9 @@ class ProtoMacrosPlay(override val c: blackbox.Context) extends scalapb_json.Pro
     q"_root_.scalapb_playjson.JsonFormat.fromJsonString[$A]($json)"
   }
 
-  override def fromJsonConstantImpl[A <: GeneratedMessage with Message[A]: c.WeakTypeTag: GeneratedMessageCompanion](
+  override def fromJsonConstantImpl[
+    A <: GeneratedMessage: c.WeakTypeTag: GeneratedMessageCompanion
+  ](
     string: String
   ): c.Tree = {
     val A = weakTypeTag[A]

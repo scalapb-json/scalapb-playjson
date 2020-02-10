@@ -362,7 +362,7 @@ class Parser(config: Parser.ParserConfig) {
 
   def typeRegistry: TypeRegistry = config.typeRegistry
 
-  def fromJsonString[A <: GeneratedMessage with Message[A]](
+  def fromJsonString[A <: GeneratedMessage](
     str: String
   )(implicit cmp: GeneratedMessageCompanion[A]): A = {
     val j =
@@ -375,13 +375,13 @@ class Parser(config: Parser.ParserConfig) {
     fromJson(j)
   }
 
-  def fromJson[A <: GeneratedMessage with Message[A]](
+  def fromJson[A <: GeneratedMessage](
     value: JsValue
   )(implicit cmp: GeneratedMessageCompanion[A]): A = {
     fromJson(value, skipTypeUrl = false)
   }
 
-  private[scalapb_playjson] def fromJson[A <: GeneratedMessage with Message[A]](
+  private[scalapb_playjson] def fromJson[A <: GeneratedMessage](
     value: JsValue,
     skipTypeUrl: Boolean
   )(implicit cmp: GeneratedMessageCompanion[A]): A = {
@@ -638,7 +638,7 @@ object JsonFormat {
     )
     .registerMessageFormatter[com.google.protobuf.any.Any](AnyFormat.anyWriter, AnyFormat.anyParser)
 
-  def primitiveWrapperWriter[T <: GeneratedMessage with Message[T]](
+  def primitiveWrapperWriter[T <: GeneratedMessage](
     implicit cmp: GeneratedMessageCompanion[T]
   ): ((Printer, T) => JsValue) = {
     val fieldDesc = cmp.scalaDescriptor.findFieldByNumber(1).get
@@ -646,7 +646,7 @@ object JsonFormat {
       printer.serializeSingleValue(fieldDesc, t.getField(fieldDesc), formattingLongAsNumber = false)
   }
 
-  def primitiveWrapperParser[T <: GeneratedMessage with Message[T]](
+  def primitiveWrapperParser[T <: GeneratedMessage](
     implicit cmp: GeneratedMessageCompanion[T]
   ): ((Parser, JsValue) => T) = {
     val fieldDesc = cmp.scalaDescriptor.findFieldByNumber(1).get
@@ -671,20 +671,19 @@ object JsonFormat {
 
   def toJson[A <: GeneratedMessage](m: A): JsValue = printer.toJson(m)
 
-  def fromJson[A <: GeneratedMessage with Message[A]: GeneratedMessageCompanion](
+  def fromJson[A <: GeneratedMessage: GeneratedMessageCompanion](
     value: JsValue
   ): A = {
     parser.fromJson(value)
   }
 
-  def fromJsonString[A <: GeneratedMessage with Message[A]: GeneratedMessageCompanion](
+  def fromJsonString[A <: GeneratedMessage: GeneratedMessageCompanion](
     str: String
   ): A = {
     parser.fromJsonString(str)
   }
 
-  implicit def protoToReader[T <: GeneratedMessage with Message[T]: GeneratedMessageCompanion]
-    : Reads[T] =
+  implicit def protoToReader[T <: GeneratedMessage: GeneratedMessageCompanion]: Reads[T] =
     new Reads[T] {
       def reads(value: JsValue) =
         try {
@@ -695,7 +694,7 @@ object JsonFormat {
         }
     }
 
-  implicit def protoToWriter[T <: GeneratedMessage with Message[T]]: Writes[T] = new Writes[T] {
+  implicit def protoToWriter[T <: GeneratedMessage]: Writes[T] = new Writes[T] {
     def writes(obj: T): JsValue = printer.toJson(obj)
   }
 
