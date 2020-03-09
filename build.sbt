@@ -130,7 +130,7 @@ lazy val commonSettings = Def.settings(
   playJsonVersion := "2.8.1",
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.6.3" % "test",
-    "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.3.1" % "test",
+    "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.3.2" % "test",
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
     "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
