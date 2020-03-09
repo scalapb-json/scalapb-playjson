@@ -528,16 +528,16 @@ class Parser(config: Parser.ParserConfig) {
     value: JsValue
   ): PValue = fd.scalaType match {
     case ScalaType.Enum(ed) => {
-      config.formatRegistry.getEnumParser(ed) match {
-        case Some(parser) =>
-          parser(this, value)
-        case None =>
-          defaultEnumParser(ed, value)
+        config.formatRegistry.getEnumParser(ed) match {
+          case Some(parser) =>
+            parser(this, value)
+          case None =>
+            defaultEnumParser(ed, value)
+        }
+      } match {
+        case Some(x) => PEnum(x)
+        case None => PEmpty
       }
-    } match {
-      case Some(x) => PEnum(x)
-      case None => PEmpty
-    }
     case ScalaType.Message(_) =>
       fromJsonToPMessage(
         containerCompanion.messageCompanionForFieldNumber(fd.number),
