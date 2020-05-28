@@ -25,11 +25,11 @@ class RepeatableTestGen(unknown: Gen[UnknownFieldSet]) {
     unknown
 
   private[this] implicit val nestedGen: Gen[Nested] =
-    Gen.from2(Nested.of)
+    Gen.from1(Nested.of)
 
   private[this] implicit val enumGen: Gen[RepeatablesTest.Enum] =
     Gen.elements(RepeatablesTest.Enum.values.head, RepeatablesTest.Enum.values.tail: _*)
 
   implicit val repGen: Gen[RepeatablesTest] =
-    Gen.from7(RepeatablesTest.of)
+    Gen.from6(RepeatablesTest.of)
 }

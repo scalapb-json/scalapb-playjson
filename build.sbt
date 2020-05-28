@@ -126,15 +126,15 @@ lazy val commonSettings = Def.settings(
   // https://github.com/scalapb/ScalaPB/commit/d3cc69515ea90f1af7eaf2732d22facb6c9e95e3
   PB.protocVersion := "-v371",
   PB.protoSources in Test := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
-  scalapbJsonCommonVersion := "0.6.0-M4",
-  playJsonVersion := "2.8.1",
+  scalapbJsonCommonVersion := "0.6.1",
+  playJsonVersion := "2.9.0",
   libraryDependencies ++= Seq(
-    "com.github.scalaprops" %%% "scalaprops" % "0.6.3" % "test",
+    "com.github.scalaprops" %%% "scalaprops" % "0.8.0" % "test",
     "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.3.2" % "test",
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
     "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
-    "org.scalatest" %%% "scalatest" % "3.1.1" % "test"
+    "org.scalatest" %%% "scalatest" % "3.1.2" % "test"
   ),
   pomExtra in Global := {
     <url>https://github.com/scalapb-json/scalapb-playjson</url>
