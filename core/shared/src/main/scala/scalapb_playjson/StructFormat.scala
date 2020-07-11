@@ -6,15 +6,16 @@ import play.api.libs.json._
 import scalapb_json._
 
 object StructFormat {
-  def structValueWriter(v: struct.Value): JsValue = v.kind match {
-    case Kind.Empty => JsNull
-    case Kind.NullValue(_) => JsNull
-    case Kind.NumberValue(value) => Printer.doubleToJson(value)
-    case Kind.StringValue(value) => JsString(value)
-    case Kind.BoolValue(value) => JsBoolean(value)
-    case Kind.StructValue(value) => structWriter(value)
-    case Kind.ListValue(value) => listValueWriter(value)
-  }
+  def structValueWriter(v: struct.Value): JsValue =
+    v.kind match {
+      case Kind.Empty => JsNull
+      case Kind.NullValue(_) => JsNull
+      case Kind.NumberValue(value) => Printer.doubleToJson(value)
+      case Kind.StringValue(value) => JsString(value)
+      case Kind.BoolValue(value) => JsBoolean(value)
+      case Kind.StructValue(value) => structWriter(value)
+      case Kind.ListValue(value) => listValueWriter(value)
+    }
 
   def structValueParser(v: JsValue): struct.Value = {
     val kind: struct.Value.Kind = v match {
@@ -28,11 +29,12 @@ object StructFormat {
     struct.Value(kind = kind)
   }
 
-  def structParser(v: JsValue): struct.Struct = v match {
-    case obj: JsObject =>
-      jsObjectToStruct(obj)
-    case _ => throw new JsonFormatException("Expected an object")
-  }
+  def structParser(v: JsValue): struct.Struct =
+    v match {
+      case obj: JsObject =>
+        jsObjectToStruct(obj)
+      case _ => throw new JsonFormatException("Expected an object")
+    }
 
   def jsObjectToStruct(obj: JsObject): struct.Struct =
     struct.Struct(
@@ -42,20 +44,22 @@ object StructFormat {
   def structWriter(v: struct.Struct): JsValue =
     JsObject(v.fields.map { case (x, y) => (x, structValueWriter(y)) })
 
-  def listValueParser(v: JsValue): struct.ListValue = v match {
-    case JsArray(elems) =>
-      com.google.protobuf.struct.ListValue(elems.map(structValueParser).toSeq)
-    case _ => throw new JsonFormatException("Expected a list")
-  }
+  def listValueParser(v: JsValue): struct.ListValue =
+    v match {
+      case JsArray(elems) =>
+        com.google.protobuf.struct.ListValue(elems.map(structValueParser).toSeq)
+      case _ => throw new JsonFormatException("Expected a list")
+    }
 
   def listValueWriter(v: struct.ListValue): JsArray =
     JsArray(v.values.map(structValueWriter))
 
-  def nullValueParser(v: JsValue): struct.NullValue = v match {
-    case JsNull =>
-      com.google.protobuf.struct.NullValue.NULL_VALUE
-    case _ => throw new JsonFormatException("Expected a null")
-  }
+  def nullValueParser(v: JsValue): struct.NullValue =
+    v match {
+      case JsNull =>
+        com.google.protobuf.struct.NullValue.NULL_VALUE
+      case _ => throw new JsonFormatException("Expected a null")
+    }
 
   def nullValueWriter(v: struct.NullValue): JsValue = JsNull
 }
