@@ -81,6 +81,7 @@ class Printer(config: Printer.PrinterConfig) {
   )
   def this(
     includingDefaultValueFields: Boolean = Printer.defaultConfig.isIncludingDefaultValueFields,
+    isPrintingEmptyArray: Boolean = Printer.defaultConfig.isPrintingEmptyArray,
     preservingProtoFieldNames: Boolean = Printer.defaultConfig.isPreservingProtoFieldNames,
     formattingLongAsNumber: Boolean = Printer.defaultConfig.isFormattingLongAsNumber,
     formattingEnumsAsNumber: Boolean = Printer.defaultConfig.isFormattingEnumsAsNumber,
@@ -90,6 +91,7 @@ class Printer(config: Printer.PrinterConfig) {
     this(
       Printer.PrinterConfig(
         isIncludingDefaultValueFields = includingDefaultValueFields,
+        isPrintingEmptyArray = isPrintingEmptyArray,
         isPreservingProtoFieldNames = preservingProtoFieldNames,
         isFormattingLongAsNumber = formattingLongAsNumber,
         isFormattingEnumsAsNumber = formattingEnumsAsNumber,
@@ -100,6 +102,9 @@ class Printer(config: Printer.PrinterConfig) {
 
   def includingDefaultValueFields: Printer =
     new Printer(config.copy(isIncludingDefaultValueFields = true))
+
+  def printingEmptyArray: Printer =
+    new Printer(config.copy(isPrintingEmptyArray = true))
 
   def preservingProtoFieldNames: Printer =
     new Printer(config.copy(isPreservingProtoFieldNames = true))
@@ -133,7 +138,7 @@ class Printer(config: Printer.PrinterConfig) {
       case null =>
       // We are never printing empty optional messages to prevent infinite recursion.
       case Nil =>
-        if (config.isIncludingDefaultValueFields) {
+        if (config.isIncludingDefaultValueFields || config.isPrintingEmptyArray) {
           b += ((name, if (fd.isMapField) Json.obj() else JsArray(Nil)))
         }
       case xs: Iterable[GeneratedMessage] @unchecked =>
@@ -187,7 +192,7 @@ class Printer(config: Printer.PrinterConfig) {
           b += JField(name, defaultJsValue(fd))
         }
       case PRepeated(xs) =>
-        if (xs.nonEmpty || config.isIncludingDefaultValueFields) {
+        if (xs.nonEmpty || config.isIncludingDefaultValueFields || config.isPrintingEmptyArray) {
           b += JField(
             name,
             JsArray(xs.map(serializeSingleValue(fd, _, config.isFormattingLongAsNumber)))
@@ -279,6 +284,7 @@ object Printer {
 
   private final case class PrinterConfig(
     isIncludingDefaultValueFields: Boolean,
+    isPrintingEmptyArray: Boolean,
     isPreservingProtoFieldNames: Boolean,
     isFormattingLongAsNumber: Boolean,
     isFormattingEnumsAsNumber: Boolean,
@@ -288,6 +294,7 @@ object Printer {
 
   private val defaultConfig = PrinterConfig(
     isIncludingDefaultValueFields = false,
+    isPrintingEmptyArray = false,
     isPreservingProtoFieldNames = false,
     isFormattingLongAsNumber = false,
     isFormattingEnumsAsNumber = false,

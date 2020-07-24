@@ -250,6 +250,22 @@ class JsonFormatSpec extends AnyFlatSpec with Matchers with OptionValues with Js
     )
   }
 
+  "TestProto" should "print empty array if configured" in {
+    new Printer(isPrintingEmptyArray = true).toJson(MyTest()) must be(
+      parse("""{
+          |  "primitiveSequence": [],
+          |  "repMessage": [],
+          |  "stringToInt32": {},
+          |  "intToMytest": {},
+          |  "repEnum": [],
+          |  "intToEnum": {},
+          |  "boolToString": {},
+          |  "stringToBool": {},
+          |  "fixed64ToBytes": {}
+          |}""".stripMargin)
+    )
+  }
+
   "TestProto" should "format int64 as JSON string" in {
     new Printer().print(MyTest(bazinga = Some(642))) must be("""{"bazinga":"642"}""")
   }
