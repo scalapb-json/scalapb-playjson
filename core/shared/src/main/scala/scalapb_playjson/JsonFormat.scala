@@ -417,27 +417,26 @@ class Parser(config: Parser.ParserConfig) {
             val mapEntryDesc = fd.scalaType.asInstanceOf[ScalaType.Message].descriptor
             val keyDescriptor = mapEntryDesc.findFieldByNumber(1).get
             val valueDescriptor = mapEntryDesc.findFieldByNumber(2).get
-            PRepeated(vals.iterator.map {
-              case (key, jValue) =>
-                val keyObj = keyDescriptor.scalaType match {
-                  case ScalaType.Boolean => PBoolean(java.lang.Boolean.valueOf(key))
-                  case ScalaType.Double => PDouble(java.lang.Double.valueOf(key))
-                  case ScalaType.Float => PFloat(java.lang.Float.valueOf(key))
-                  case ScalaType.Int => PInt(java.lang.Integer.valueOf(key))
-                  case ScalaType.Long => PLong(java.lang.Long.valueOf(key))
-                  case ScalaType.String => PString(key)
-                  case _ => throw new RuntimeException(s"Unsupported type for key for ${fd.name}")
-                }
-                PMessage(
-                  Map(
-                    keyDescriptor -> keyObj,
-                    valueDescriptor -> parseSingleValue(
-                      cmp.messageCompanionForFieldNumber(fd.number),
-                      valueDescriptor,
-                      jValue
-                    )
+            PRepeated(vals.iterator.map { case (key, jValue) =>
+              val keyObj = keyDescriptor.scalaType match {
+                case ScalaType.Boolean => PBoolean(java.lang.Boolean.valueOf(key))
+                case ScalaType.Double => PDouble(java.lang.Double.valueOf(key))
+                case ScalaType.Float => PFloat(java.lang.Float.valueOf(key))
+                case ScalaType.Int => PInt(java.lang.Integer.valueOf(key))
+                case ScalaType.Long => PLong(java.lang.Long.valueOf(key))
+                case ScalaType.String => PString(key)
+                case _ => throw new RuntimeException(s"Unsupported type for key for ${fd.name}")
+              }
+              PMessage(
+                Map(
+                  keyDescriptor -> keyObj,
+                  valueDescriptor -> parseSingleValue(
+                    cmp.messageCompanionForFieldNumber(fd.number),
+                    valueDescriptor,
+                    jValue
                   )
                 )
+              )
             }.toVector)
           case _ =>
             throw new JsonFormatException(
@@ -463,18 +462,17 @@ class Parser(config: Parser.ParserConfig) {
           case JsObject(fields) =>
             val fieldMap = Parser.memorizedFieldNameMap.get(cmp.scalaDescriptor)
             val valueMapBuilder = Map.newBuilder[FieldDescriptor, PValue]
-            fields.foreach {
-              case (name, jValue) =>
-                if (fieldMap.contains(name)) {
-                  if (jValue != JsNull) {
-                    val fd = fieldMap(name)
-                    valueMapBuilder += (fd -> parseValue(fd, jValue))
-                  }
-                } else if (!config.isIgnoringUnknownFields && !(skipTypeUrl && name == "@type")) {
-                  throw new JsonFormatException(
-                    s"Cannot find field: ${name} in message ${cmp.scalaDescriptor.fullName}"
-                  )
+            fields.foreach { case (name, jValue) =>
+              if (fieldMap.contains(name)) {
+                if (jValue != JsNull) {
+                  val fd = fieldMap(name)
+                  valueMapBuilder += (fd -> parseValue(fd, jValue))
                 }
+              } else if (!config.isIgnoringUnknownFields && !(skipTypeUrl && name == "@type")) {
+                throw new JsonFormatException(
+                  s"Cannot find field: ${name} in message ${cmp.scalaDescriptor.fullName}"
+                )
+              }
             }
 
             PMessage(valueMapBuilder.result())
@@ -540,7 +538,8 @@ class Parser(config: Parser.ParserConfig) {
     value: JsValue
   ): PValue =
     fd.scalaType match {
-      case ScalaType.Enum(ed) => {
+      case ScalaType.Enum(ed) =>
+        {
           config.formatRegistry.getEnumParser(ed) match {
             case Some(parser) =>
               parser(this, value)
