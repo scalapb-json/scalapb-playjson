@@ -14,7 +14,7 @@ object RepeatableTestGen {
       Gen.alphaNumString
 
     implicit def seqGen[A: Gen]: Gen[Seq[A]] =
-      Gen(Gen[Vector[A]].f)
+      Gen.gen(Gen[Vector[A]].f)
   }
 }
 
