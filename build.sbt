@@ -131,7 +131,7 @@ lazy val commonSettings = Def.settings(
     "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.4.1" % "test",
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
-    "org.scalatest" %%% "scalatest" % "3.2.7" % "test"
+    "org.scalatest" %%% "scalatest" % "3.2.8" % "test"
   ),
   Global / pomExtra := {
     <url>https://github.com/scalapb-json/scalapb-playjson</url>
