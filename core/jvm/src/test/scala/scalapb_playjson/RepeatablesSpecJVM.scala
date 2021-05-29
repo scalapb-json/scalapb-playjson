@@ -12,7 +12,7 @@ object RepeatablesSpecJVM extends Scalaprops {
     Gen.alphaNumString.map(ByteString.copyFromUtf8)
 
   val g = new RepeatableTestGen({
-    import scalaprops.Shapeless._
+    import scalaprops.ScalapropsShapeless._
     import RepeatableTestGen.Base._
     Gen[UnknownFieldSet]
   })
