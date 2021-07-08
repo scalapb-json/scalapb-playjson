@@ -43,7 +43,7 @@ implicit val myMsgWrites: Writes[MyMsg] = JsonFormat.protoToWriter[MyMsg]
 
 implicit val myMsgReads: Reads[MyMsg] = JsonFormat.protoToReads[MyMsg]
 
-implicit val myMsgFormat: Format[MyMsg] = JsonFormat.format[MyMsg]
+implicit val myMsgFormat: Format[MyMsg] = JsonFormat.protoToFormat[MyMsg]
 ```
 
 ### Credits
