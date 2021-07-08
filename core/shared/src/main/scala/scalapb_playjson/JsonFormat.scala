@@ -714,6 +714,12 @@ object JsonFormat {
       def writes(obj: T): JsValue = printer.toJson(obj)
     }
 
+  implicit def format[T <: GeneratedMessage : GeneratedMessageCompanion]: Format[T] = new Format[T] {
+    override def writes(o: T) = protoToWriter[T].writes(o)
+
+    override def reads(json: JsValue) = protoToReader[T].reads(json)
+  }
+
   @deprecated("Use parsePrimitive(protoType, value, onError) instead.", "0.9.0")
   def parsePrimitive(
     scalaType: ScalaType,
