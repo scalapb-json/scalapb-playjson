@@ -37,6 +37,15 @@ JsonFormat.fromJsonString(str) // return MessageType
 JsonFormat.fromJson(json) // return MessageType
 ```
 
+Or you can use Reads/Writes/Format implicitly:
+```scala
+implicit val myMsgWrites: Writes[MyMsg] = JsonFormat.protoToWriter[MyMsg]
+
+implicit val myMsgReads: Reads[MyMsg] = JsonFormat.protoToReads[MyMsg]
+
+implicit val myMsgFormat: Format[MyMsg] = JsonFormat.protoToFormat[MyMsg]
+```
+
 ### Credits
 
 fork from https://github.com/whisklabs/scalapb-playjson
