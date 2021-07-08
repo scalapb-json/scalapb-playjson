@@ -272,7 +272,7 @@ class Printer(config: Printer.PrinterConfig) {
       case PFloat(v) => Printer.floatToJson(v)
       case PBoolean(v) => JsBoolean(v)
       case PString(v) => JsString(v)
-      case PByteString(v) => JsString(java.util.Base64.getEncoder.encodeToString(v.toByteArray))
+      case PByteString(v) => JsString(java.util.Base64.getEncoder.encodeToString(v.toByteArray()))
       case _: PMessage | PRepeated(_) | PEmpty => throw new RuntimeException("Should not happen")
     }
 }
