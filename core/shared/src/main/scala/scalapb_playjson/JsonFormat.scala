@@ -699,25 +699,23 @@ object JsonFormat {
   }
 
   implicit def protoToReader[T <: GeneratedMessage: GeneratedMessageCompanion]: Reads[T] =
-    new Reads[T] {
-      def reads(value: JsValue) =
-        try {
-          JsSuccess(parser.fromJson(value))
-        } catch {
-          case NonFatal(e) =>
-            JsError(JsonValidationError(e.toString, e))
-        }
-    }
+    protoToFormat[T]
 
   implicit def protoToWriter[T <: GeneratedMessage]: Writes[T] =
     new Writes[T] {
       def writes(obj: T): JsValue = printer.toJson(obj)
     }
 
-  implicit def format[T <: GeneratedMessage: GeneratedMessageCompanion]: Format[T] = new Format[T] {
-    override def writes(o: T) = protoToWriter[T].writes(o)
+  implicit def protoToFormat[T <: GeneratedMessage: GeneratedMessageCompanion]: Format[T] = new Format[T] {
+    override def writes(o: T) = printer.toJson(o)
 
-    override def reads(json: JsValue) = protoToReader[T].reads(json)
+    override def reads(value: JsValue) =
+      try {
+        JsSuccess(parser.fromJson(value))
+      } catch {
+        case NonFatal(e) =>
+          JsError(JsonValidationError(e.toString, e))
+      }
   }
 
   @deprecated("Use parsePrimitive(protoType, value, onError) instead.", "0.9.0")
