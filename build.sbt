@@ -80,8 +80,8 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
       scalapb.gen(javaConversions = true) -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      "com.google.protobuf" % "protobuf-java-util" % "3.19.4" % "test",
-      "com.google.protobuf" % "protobuf-java" % "3.19.4" % "protobuf"
+      "com.google.protobuf" % "protobuf-java-util" % "3.20.0" % "test",
+      "com.google.protobuf" % "protobuf-java" % "3.20.0" % "protobuf"
     )
   )
   .jsSettings(
