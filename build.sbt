@@ -60,21 +60,21 @@ lazy val macros = project
     scalapbPlayJsonJVM,
   )
 
-lazy val tests = crossProject(JVMPlatform, JSPlatform)
+lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("tests"))
   .settings(
     commonSettings,
     noPublish,
   )
   .configure(_ dependsOn macros)
-  .platformsSettings(JSPlatform)(
+  .platformsSettings(JSPlatform, NativePlatform)(
     disableScala3,
   )
   .dependsOn(
     scalapbPlayJson % "test->test",
   )
 
-val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
+val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("core"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
@@ -114,6 +114,9 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
       "com.google.protobuf" % "protobuf-java" % "3.24.3" % "protobuf"
     )
   )
+  .nativeSettings(
+    scalapropsNativeSettings
+  )
   .jsSettings(
     buildInfoKeys ++= Seq[BuildInfoKey](
       "scalajsVersion" -> scalaJSVersion
@@ -128,7 +131,7 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
       }
     },
   )
-  .platformsSettings(JSPlatform)(
+  .platformsSettings(JSPlatform, NativePlatform)(
     Test / PB.targets ++= Seq[protocbridge.Target](
       scalapb.gen(javaConversions = false) -> (Test / sourceManaged).value
     )
