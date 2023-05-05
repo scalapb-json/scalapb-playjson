@@ -322,7 +322,7 @@ object Printer {
     } else if (java.lang.Double.isNaN(value)) {
       JsStringNaN
     } else {
-      JsNumber(value)
+      JsNumber(BigDecimal(value))
     }
   }
 }
