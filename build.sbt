@@ -97,7 +97,9 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
         "-P:scalajs:mapSourceURI:$a->$g/"
       }
     },
-    (Test / PB.targets) := Seq(
+  )
+  .platformsSettings(JSPlatform)(
+    Test / PB.targets ++= Seq[protocbridge.Target](
       scalapb.gen(javaConversions = false) -> (Test / sourceManaged).value
     )
   )
