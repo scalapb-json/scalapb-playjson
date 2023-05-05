@@ -75,7 +75,7 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
     )
   )
   .jvmSettings(
-    (Test / PB.targets) := Seq(
+    Test / PB.targets ++= Seq[protocbridge.Target](
       PB.gens.java -> (Test / sourceManaged).value,
       scalapb.gen(javaConversions = true) -> (Test / sourceManaged).value
     ),
