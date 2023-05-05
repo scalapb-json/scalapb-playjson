@@ -21,6 +21,7 @@ jobs:
         distribution: temurin
     - uses: coursier/cache-action@v6
     - run: sbt -v
+           -J-Xmx5G
            "+ scalafmtCheckAll"
            scalafmtSbtCheck
            "+ test"
