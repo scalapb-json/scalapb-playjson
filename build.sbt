@@ -19,6 +19,33 @@ val unusedWarnings = Def.setting(
   Seq("-Ywarn-unused:imports")
 )
 
+lazy val disableScala3 = Def.settings(
+  libraryDependencies := {
+    if (scalaBinaryVersion.value == "3") {
+      Nil
+    } else {
+      libraryDependencies.value
+    }
+  },
+  Seq(Compile, Test).map { x =>
+    (x / sources) := {
+      if (scalaBinaryVersion.value == "3") {
+        Nil
+      } else {
+        (x / sources).value
+      }
+    }
+  },
+  Test / test := {
+    if (scalaBinaryVersion.value == "3") {
+      ()
+    } else {
+      (Test / test).value
+    }
+  },
+  publish / skip := (scalaBinaryVersion.value == "3"),
+)
+
 lazy val macros = project
   .in(file("macros"))
   .settings(
@@ -40,6 +67,9 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform)
     noPublish,
   )
   .configure(_ dependsOn macros)
+  .platformsSettings(JSPlatform)(
+    disableScala3,
+  )
   .dependsOn(
     scalapbPlayJson % "test->test",
   )
@@ -120,7 +150,7 @@ lazy val commonSettings = Def.settings(
   scalapropsCoreSettings,
   (Compile / unmanagedResources) += (LocalRootProject / baseDirectory).value / "LICENSE.txt",
   scalaVersion := Scala212,
-  crossScalaVersions := Seq(Scala212, "2.13.10"),
+  crossScalaVersions := Seq(Scala212, "2.13.10", "3.3.0-RC5"),
   scalacOptions ++= unusedWarnings.value,
   Seq(Compile, Test).flatMap(c => (c / console / scalacOptions) --= unusedWarnings.value),
   scalacOptions ++= Seq("-feature", "-deprecation", "-language:existentials"),
@@ -131,7 +161,14 @@ lazy val commonSettings = Def.settings(
   Compile / PB.targets := Nil,
   (Test / PB.protoSources) := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
   scalapbJsonCommonVersion := "0.8.9",
-  playJsonVersion := "2.9.4",
+  playJsonVersion := {
+    scalaBinaryVersion.value match {
+      case "3" =>
+        "2.10.0-RC8"
+      case _ =>
+        "2.9.4"
+    }
+  },
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.9.1" % "test",
     "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.5.1" % "test",
