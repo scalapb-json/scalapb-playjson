@@ -10,8 +10,6 @@ import org.scalatest.matchers.must.Matchers
 trait JavaAssertionsPlatform {
   self: Matchers with JavaAssertions =>
 
-  def registeredCompanions: Seq[GeneratedMessageCompanion[_]]
-
   val JavaJsonTypeRegistry =
     registeredCompanions.foldLeft(JavaTypeRegistry.newBuilder())(_ add _.javaDescriptor).build()
   val JavaJsonPrinter =
