@@ -150,7 +150,7 @@ lazy val commonSettings = Def.settings(
   scalapropsCoreSettings,
   (Compile / unmanagedResources) += (LocalRootProject / baseDirectory).value / "LICENSE.txt",
   scalaVersion := Scala212,
-  crossScalaVersions := Seq(Scala212, "2.13.11", "3.3.0-RC6"),
+  crossScalaVersions := Seq(Scala212, "2.13.11", "3.3.0"),
   scalacOptions ++= unusedWarnings.value,
   Seq(Compile, Test).flatMap(c => (c / console / scalacOptions) --= unusedWarnings.value),
   scalacOptions ++= Seq("-feature", "-deprecation", "-language:existentials"),
@@ -164,7 +164,7 @@ lazy val commonSettings = Def.settings(
   playJsonVersion := {
     scalaBinaryVersion.value match {
       case "3" =>
-        "2.10.0-RC8"
+        "2.10.0-RC9"
       case _ =>
         "2.9.4"
     }
