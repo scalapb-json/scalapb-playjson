@@ -2,7 +2,7 @@ import scalapb.compiler.Version._
 import sbtrelease.ReleaseStateTransformations._
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-val Scala212 = "2.12.17"
+val Scala212 = "2.12.18"
 val playJsonVersion = settingKey[String]("")
 val scalapbJsonCommonVersion = settingKey[String]("")
 
@@ -110,8 +110,8 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform)
       scalapb.gen(javaConversions = true) -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      "com.google.protobuf" % "protobuf-java-util" % "3.23.1" % "test",
-      "com.google.protobuf" % "protobuf-java" % "3.23.1" % "protobuf"
+      "com.google.protobuf" % "protobuf-java-util" % "3.23.2" % "test",
+      "com.google.protobuf" % "protobuf-java" % "3.23.2" % "protobuf"
     )
   )
   .jsSettings(
@@ -150,7 +150,7 @@ lazy val commonSettings = Def.settings(
   scalapropsCoreSettings,
   (Compile / unmanagedResources) += (LocalRootProject / baseDirectory).value / "LICENSE.txt",
   scalaVersion := Scala212,
-  crossScalaVersions := Seq(Scala212, "2.13.10", "3.3.0"),
+  crossScalaVersions := Seq(Scala212, "2.13.11", "3.3.0"),
   scalacOptions ++= unusedWarnings.value,
   Seq(Compile, Test).flatMap(c => (c / console / scalacOptions) --= unusedWarnings.value),
   scalacOptions ++= Seq("-feature", "-deprecation", "-language:existentials"),
@@ -164,7 +164,7 @@ lazy val commonSettings = Def.settings(
   playJsonVersion := {
     scalaBinaryVersion.value match {
       case "3" =>
-        "2.10.0-RC8"
+        "2.10.0-RC9"
       case _ =>
         "2.9.4"
     }
