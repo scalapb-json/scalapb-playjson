@@ -161,14 +161,7 @@ lazy val commonSettings = Def.settings(
   Compile / PB.targets := Nil,
   (Test / PB.protoSources) := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
   scalapbJsonCommonVersion := "0.8.9",
-  playJsonVersion := {
-    scalaBinaryVersion.value match {
-      case "3" =>
-        "2.10.0-RC9"
-      case _ =>
-        "2.9.4"
-    }
-  },
+  playJsonVersion := "2.10.0",
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.9.1" % "test",
     "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.5.1" % "test",
