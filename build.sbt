@@ -52,7 +52,7 @@ lazy val macros = project
     commonSettings,
     name := UpdateReadme.scalapbPlayJsonMacrosName,
     libraryDependencies ++= Seq(
-      "com.typesafe.play" %% "play-json" % playJsonVersion.value, // don't use %%%
+      "org.playframework" %% "play-json" % playJsonVersion.value, // don't use %%%
       "io.github.scalapb-json" %%% "scalapb-json-macros" % scalapbJsonCommonVersion.value,
     ),
   )
@@ -80,7 +80,7 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     commonSettings,
     name := UpdateReadme.scalapbPlayJsonName,
-    libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
+    libraryDependencies += "org.playframework" %%% "play-json" % playJsonVersion.value,
     (Compile / packageSrc / mappings) ++= (Compile / managedSources).value.map { f =>
       // https://github.com/sbt/sbt-buildinfo/blob/v0.7.0/src/main/scala/sbtbuildinfo/BuildInfoPlugin.scala#L58
       val buildInfoDir = "sbt-buildinfo"
@@ -164,7 +164,7 @@ lazy val commonSettings = Def.settings(
   Compile / PB.targets := Nil,
   (Test / PB.protoSources) := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
   scalapbJsonCommonVersion := "0.9.0",
-  playJsonVersion := "2.10.2",
+  playJsonVersion := "3.0.0",
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.9.1" % "test",
     "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.5.1" % "test",
