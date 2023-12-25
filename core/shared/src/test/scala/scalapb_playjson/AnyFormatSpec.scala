@@ -4,6 +4,7 @@ import com.google.protobuf.any.{Any => PBAny}
 import jsontest.anytests.{AnyTest, ManyAnyTest}
 import play.api.libs.json.Json.parse
 import scalapb_json._
+import scalapb.GeneratedMessageCompanion
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 
@@ -37,7 +38,7 @@ class AnyFormatSpec extends AnyFlatSpec with Matchers with JavaAssertions {
       |}
     """.stripMargin)
 
-  override def registeredCompanions = Seq(AnyTest, ManyAnyTest)
+  override def registeredCompanions: Seq[GeneratedMessageCompanion[?]] = Seq(AnyTest, ManyAnyTest)
 
   // For clarity
   def UnregisteredPrinter = JsonFormat.printer

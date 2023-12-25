@@ -155,6 +155,14 @@ lazy val commonSettings = Def.settings(
   scalaVersion := Scala212,
   crossScalaVersions := Seq(Scala212, "2.13.12", "3.3.1"),
   scalacOptions ++= unusedWarnings.value,
+  scalacOptions ++= {
+    scalaBinaryVersion.value match {
+      case "3" =>
+        Nil
+      case _ =>
+        Seq("-Xsource:3")
+    }
+  },
   Seq(Compile, Test).flatMap(c => (c / console / scalacOptions) --= unusedWarnings.value),
   scalacOptions ++= Seq("-feature", "-deprecation", "-language:existentials"),
   description := "Json/Protobuf convertors for ScalaPB",
