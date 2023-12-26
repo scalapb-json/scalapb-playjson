@@ -74,6 +74,15 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     scalapbPlayJson % "test->test",
   )
 
+val scalapbScala3Sources = Def.setting(
+  scalaBinaryVersion.value match {
+    case "2.12" =>
+      false
+    case _ =>
+      true
+  }
+)
+
 val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("core"))
   .enablePlugins(BuildInfoPlugin)
@@ -107,7 +116,10 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .jvmSettings(
     Test / PB.targets ++= Seq[protocbridge.Target](
       PB.gens.java -> (Test / sourceManaged).value,
-      scalapb.gen(javaConversions = true) -> (Test / sourceManaged).value
+      scalapb.gen(
+        javaConversions = true,
+        scala3Sources = scalapbScala3Sources.value
+      ) -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
       "com.google.protobuf" % "protobuf-java-util" % "3.25.1" % "test",
@@ -133,7 +145,10 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   )
   .platformsSettings(JSPlatform, NativePlatform)(
     Test / PB.targets ++= Seq[protocbridge.Target](
-      scalapb.gen(javaConversions = false) -> (Test / sourceManaged).value
+      scalapb.gen(
+        javaConversions = false,
+        scala3Sources = scalapbScala3Sources.value
+      ) -> (Test / sourceManaged).value
     )
   )
 
