@@ -20,7 +20,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
 
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.7")
 
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.14"
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.15"
 
 if (sys.env.isDefinedAt("GITHUB_ACTION")) {
   Def.settings(
