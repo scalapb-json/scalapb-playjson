@@ -122,8 +122,8 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       ) -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      "com.google.protobuf" % "protobuf-java-util" % "3.25.3" % "test",
-      "com.google.protobuf" % "protobuf-java" % "3.25.3" % "protobuf"
+      "com.google.protobuf" % "protobuf-java-util" % "4.26.1" % "test",
+      "com.google.protobuf" % "protobuf-java" % "4.26.1" % "protobuf"
     )
   )
   .nativeSettings(
