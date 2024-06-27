@@ -122,6 +122,7 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       ) -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
+      "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.5.1" % "test",
       "com.google.protobuf" % "protobuf-java-util" % "3.25.3" % "test",
       "com.google.protobuf" % "protobuf-java" % "3.25.3" % "protobuf"
     )
@@ -186,11 +187,10 @@ lazy val commonSettings = Def.settings(
   Project.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
   Compile / PB.targets := Nil,
   (Test / PB.protoSources) := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
-  scalapbJsonCommonVersion := "0.9.0",
-  playJsonVersion := "3.0.4",
+  scalapbJsonCommonVersion := "0.10.0",
+  playJsonVersion := "3.1.0-M1",
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.9.1" % "test",
-    "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.5.1" % "test",
     "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
     "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
     "org.scalatest" %%% "scalatest" % "3.2.18" % "test"
