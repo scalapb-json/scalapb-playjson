@@ -123,8 +123,8 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     ),
     libraryDependencies ++= Seq(
       "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.6.0" % "test",
-      "com.google.protobuf" % "protobuf-java-util" % "3.25.4" % "test",
-      "com.google.protobuf" % "protobuf-java" % "3.25.4" % "protobuf"
+      "com.google.protobuf" % "protobuf-java-util" % "4.28.0" % "test",
+      "com.google.protobuf" % "protobuf-java" % "4.28.0" % "protobuf"
     )
   )
   .nativeSettings(
