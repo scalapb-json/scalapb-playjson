@@ -16,7 +16,7 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.12.0")
 
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.3.1")
 
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.4")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.5")
 
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.8")
 
