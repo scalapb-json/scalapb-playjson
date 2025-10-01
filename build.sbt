@@ -175,7 +175,9 @@ lazy val commonSettings = Def.settings(
     scalaBinaryVersion.value match {
       case "3" =>
         Nil
-      case _ =>
+      case "2.13" =>
+        Seq("-Xsource:3-cross")
+      case "2.12" =>
         Seq("-Xsource:3")
     }
   },
