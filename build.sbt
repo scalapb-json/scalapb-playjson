@@ -189,7 +189,7 @@ lazy val commonSettings = Def.settings(
   Project.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
   Compile / PB.targets := Nil,
   (Test / PB.protoSources) := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
-  scalapbJsonCommonVersion := "0.10.0",
+  scalapbJsonCommonVersion := "0.11.0",
   playJsonVersion := "3.1.0-M9",
   libraryDependencies ++= Seq(
     "com.github.scalaprops" %%% "scalaprops" % "0.10.0" % "test",
