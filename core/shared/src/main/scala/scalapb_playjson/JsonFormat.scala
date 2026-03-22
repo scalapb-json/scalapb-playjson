@@ -383,6 +383,9 @@ class Parser private (config: Parser.ParserConfig) {
       } catch {
         case e: IllegalArgumentException =>
           throw new JsonFormatException("could not parse json", e)
+        case e
+            if e.getClass.getName == "com.fasterxml.jackson.core.exc.StreamConstraintsException" =>
+          throw new JsonFormatException("could not parse json", e)
       }
     fromJson(j)
   }
