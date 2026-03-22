@@ -8,7 +8,7 @@ import scalapb_json.JsonFormatException
 import org.scalatest.matchers.must.Matchers
 
 trait JavaAssertionsPlatform {
-  self: Matchers with JavaAssertions =>
+  self: Matchers & JavaAssertions =>
 
   val JavaJsonTypeRegistry =
     registeredCompanions.foldLeft(JavaTypeRegistry.newBuilder())(_ add _.javaDescriptor).build()
@@ -44,7 +44,7 @@ trait JavaAssertionsPlatform {
     json: String,
     expected: T
   )(implicit
-    cmp: GeneratedMessageCompanion[T] with JavaProtoSupport[T, J],
+    cmp: GeneratedMessageCompanion[T] & JavaProtoSupport[T, J],
     parserContext: ParserContext
   ): Assertion = {
     val parsedJava: J = {
@@ -60,7 +60,7 @@ trait JavaAssertionsPlatform {
 
   def assertFails[T <: scalapb.GeneratedMessage, J <: GeneratedMessageV3](
     json: String,
-    cmp: GeneratedMessageCompanion[T] with JavaProtoSupport[T, J]
+    cmp: GeneratedMessageCompanion[T] & JavaProtoSupport[T, J]
   )(implicit parserContext: ParserContext): Assertion = {
     val builder = cmp.toJavaProto(cmp.defaultInstance).newBuilderForType()
     assertThrows[InvalidProtocolBufferException] {
