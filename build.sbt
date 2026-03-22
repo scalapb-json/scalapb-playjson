@@ -16,7 +16,12 @@ val tagOrHash = Def.setting {
 }
 
 val unusedWarnings = Def.setting(
-  Seq("-Ywarn-unused:imports")
+  scalaBinaryVersion.value match {
+    case "2.12" =>
+      Seq("-Ywarn-unused:imports")
+    case _ =>
+      Seq("-Wunused:imports")
+  }
 )
 
 lazy val disableScala3 = Def.settings(
