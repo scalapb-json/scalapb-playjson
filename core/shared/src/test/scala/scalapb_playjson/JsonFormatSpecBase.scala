@@ -5,7 +5,7 @@ import jsontest.test._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 
-trait JsonFormatSpecBase extends JavaAssertions { self: AnyFlatSpec with Matchers =>
+trait JsonFormatSpecBase extends JavaAssertions { self: AnyFlatSpec & Matchers =>
 
   def assertAcceptsQuotes(field: String, value: String): Unit = {
     JsonFormat.fromJsonString[TestAllTypes](s"""{"$field": "$value"}""")
