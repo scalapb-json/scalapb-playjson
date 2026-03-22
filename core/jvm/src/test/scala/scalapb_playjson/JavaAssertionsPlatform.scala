@@ -53,7 +53,7 @@ trait JavaAssertionsPlatform {
       builder.build().asInstanceOf[J]
     }
 
-    val parsedScala = parserContext.scalaParser.fromJsonString[T](json)(cmp)
+    val parsedScala = parserContext.scalaParser.fromJsonString[T](json)(using cmp)
     parsedScala must be(expected)
     cmp.fromJavaProto(parsedJava) must be(expected)
   }
