@@ -72,6 +72,9 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     noPublish,
   )
   .configure(_ dependsOn macros)
+  .nativeSettings(
+    evictionErrorLevel := Level.Warn,
+  )
   .platformsSettings(JSPlatform, NativePlatform)(
     disableScala3,
   )
@@ -133,6 +136,7 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     )
   )
   .nativeSettings(
+    evictionErrorLevel := Level.Warn,
     scalapropsNativeSettings
   )
   .jsSettings(
