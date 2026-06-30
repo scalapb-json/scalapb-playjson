@@ -4,9 +4,9 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.22.0")
 
-addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.3.2")
+addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.3.2+24-3446737e-SNAPSHOT")
 
-addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2")
+addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2+24-3446737e-SNAPSHOT")
 
 addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.12")
 
@@ -16,9 +16,9 @@ addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.3.1")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")
 
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.8")
+addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.1.0-RC1")
 
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.20"
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "1.0.0-alpha.5"
 
 if (sys.env.isDefinedAt("GITHUB_ACTION")) {
   Def.settings(
