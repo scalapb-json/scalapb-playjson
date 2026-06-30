@@ -11,7 +11,7 @@ val tagName = Def.setting {
 }
 
 val tagOrHash = Def.setting {
-  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lineStream_!.head
+  if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lazyLines_!.head
   else tagName.value
 }
 
@@ -41,11 +41,11 @@ lazy val disableScala3 = Def.settings(
       }
     }
   },
-  Test / test := {
+  Test / testFull := {
     if (scalaBinaryVersion.value == "3") {
-      ()
+      TestResult.Empty
     } else {
-      (Test / test).value
+      (Test / testFull).value
     }
   },
   publish / skip := (scalaBinaryVersion.value == "3"),
@@ -58,7 +58,7 @@ lazy val macros = project
     name := UpdateReadme.scalapbPlayJsonMacrosName,
     libraryDependencies ++= Seq(
       "org.playframework" %% "play-json" % playJsonVersion.value, // don't use %%%
-      "io.github.scalapb-json" %%% "scalapb-json-macros" % scalapbJsonCommonVersion.value,
+      "io.github.scalapb-json" %% "scalapb-json-macros" % scalapbJsonCommonVersion.value,
     ),
   )
   .dependsOn(
@@ -71,7 +71,7 @@ lazy val tests = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     commonSettings,
     noPublish,
   )
-  .configure(_ dependsOn macros)
+  .configure(_.dependsOn(macros))
   .nativeSettings(
     evictionErrorLevel := Level.Warn,
   )
@@ -97,20 +97,8 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .settings(
     commonSettings,
     name := UpdateReadme.scalapbPlayJsonName,
-    libraryDependencies += "org.playframework" %%% "play-json" % playJsonVersion.value,
-    (Compile / packageSrc / mappings) ++= (Compile / managedSources).value.map { f =>
-      // https://github.com/sbt/sbt-buildinfo/blob/v0.7.0/src/main/scala/sbtbuildinfo/BuildInfoPlugin.scala#L58
-      val buildInfoDir = "sbt-buildinfo"
-      val path = if (f.getAbsolutePath.contains(buildInfoDir)) {
-        (file(buildInfoPackage.value) / f
-          .relativeTo((Compile / sourceManaged).value / buildInfoDir)
-          .get
-          .getPath).getPath
-      } else {
-        f.relativeTo((Compile / sourceManaged).value).get.getPath
-      }
-      (f, path)
-    },
+    Test / resourceDirectories := (Test / resourceDirectories).value.distinct,
+    libraryDependencies += "org.playframework" %% "play-json" % playJsonVersion.value,
     buildInfoPackage := "scalapb_playjson",
     buildInfoObject := "ScalapbPlayJsonBuildInfo",
     buildInfoKeys := Seq[BuildInfoKey](
@@ -130,7 +118,7 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
       ) -> (Test / sourceManaged).value
     ),
     libraryDependencies ++= Seq(
-      "com.github.scalaprops" %%% "scalaprops-shapeless" % "0.6.0" % "test",
+      "com.github.scalaprops" %% "scalaprops-shapeless" % "0.6.0" % "test",
       "com.google.protobuf" % "protobuf-java-util" % "3.25.9" % "test",
       "com.google.protobuf" % "protobuf-java" % "3.25.9" % "protobuf"
     )
@@ -193,18 +181,18 @@ lazy val commonSettings = Def.settings(
   Seq(Compile, Test).flatMap(c => (c / console / scalacOptions) --= unusedWarnings.value),
   scalacOptions ++= Seq("-feature", "-deprecation", "-language:existentials"),
   description := "Json/Protobuf convertors for ScalaPB",
-  licenses += ("MIT", url("https://opensource.org/licenses/MIT")),
+  licenses += ("MIT", uri("https://opensource.org/licenses/MIT")),
   organization := "io.github.scalapb-json",
-  Project.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
+  ProjectExtra.inConfig(Test)(sbtprotoc.ProtocPlugin.protobufConfigSettings),
   Compile / PB.targets := Nil,
   (Test / PB.protoSources) := Seq(baseDirectory.value.getParentFile / "shared/src/test/protobuf"),
   scalapbJsonCommonVersion := "0.11.0",
   playJsonVersion := "3.1.0-M10",
   libraryDependencies ++= Seq(
-    "com.github.scalaprops" %%% "scalaprops" % "0.11.1" % "test",
-    "io.github.scalapb-json" %%% "scalapb-json-common" % scalapbJsonCommonVersion.value,
-    "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapbVersion % "protobuf,test",
-    "org.scalatest" %%% "scalatest" % "3.2.20" % "test"
+    "com.github.scalaprops" %% "scalaprops" % "0.11.1" % "test",
+    "io.github.scalapb-json" %% "scalapb-json-common" % scalapbJsonCommonVersion.value,
+    "com.thesamet.scalapb" %% "scalapb-runtime" % scalapbVersion % "protobuf,test",
+    "org.scalatest" %% "scalatest" % "3.2.20" % "test"
   ),
   Global / pomExtra := {
     <url>https://github.com/scalapb-json/scalapb-playjson</url>
@@ -247,7 +235,7 @@ lazy val commonSettings = Def.settings(
     tagRelease,
     ReleaseStep(
       action = { state =>
-        val extracted = Project extract state
+        val extracted = Project.extract(state)
         extracted
           .runAggregated(extracted.get(thisProjectRef) / (Global / PgpKeys.publishSigned), state)
       },
