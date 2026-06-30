@@ -23,7 +23,8 @@ jobs:
     - uses: coursier/cache-action@v8
     - uses: sbt/setup-sbt@v1
     - run: sbt -v
+           --server
            -J-Xmx5G
            "+ scalafmtCheckAll"
            scalafmtSbtCheck
-           "+ test"
+           "+ testFull"

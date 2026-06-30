@@ -16,14 +16,6 @@ addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.3.2")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")
 
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.8")
+addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.1.0-RC2")
 
 libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.21"
-
-if (sys.env.isDefinedAt("GITHUB_ACTION")) {
-  Def.settings(
-    addSbtPlugin("net.virtual-void" % "sbt-hackers-digest" % "0.1.2")
-  )
-} else {
-  Nil
-}
