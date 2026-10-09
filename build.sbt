@@ -170,6 +170,19 @@ lazy val commonSettings = Def.settings(
   scalacOptions ++= unusedWarnings.value,
   scalacOptions ++= {
     scalaBinaryVersion.value match {
+      case "2.12" | "2.13" =>
+        Seq("-release:8")
+      case _ if scalaVersion.value.startsWith("3.3.") && !platform.value.startsWith("native") =>
+        Seq(
+          "-release:11",
+          "-Yfuture-lazy-vals"
+        )
+      case _ =>
+        Nil
+    }
+  },
+  scalacOptions ++= {
+    scalaBinaryVersion.value match {
       case "3" =>
         Nil
       case "2.13" =>
