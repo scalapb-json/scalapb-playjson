@@ -13,7 +13,7 @@ object RepeatablesSpec extends Scalaprops {
   )
   import g._
 
-  val `fromJson invert toJson single` = forAll {
+  property("fromJson invert toJson single") = forAll {
     val rep = RepeatablesTest(
       strings = Seq("s1", "s2"),
       ints = Seq(14, 19),
@@ -24,7 +24,7 @@ object RepeatablesSpec extends Scalaprops {
     JsonFormat.fromJson[RepeatablesTest](j) == rep
   }
 
-  val `fromJson invert toJson` = forAll { (rep: RepeatablesTest) =>
+  property("fromJson invert toJson") = forAll { (rep: RepeatablesTest) =>
     val j = JsonFormat.toJson(rep)
     JsonFormat.fromJson[RepeatablesTest](j) == rep
   }
