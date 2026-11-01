@@ -125,7 +125,6 @@ val scalapbPlayJson = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   )
   .nativeSettings(
     evictionErrorLevel := Level.Warn,
-    scalapropsNativeSettings
   )
   .jsSettings(
     buildInfoKeys ++= Seq[BuildInfoKey](

@@ -17,7 +17,7 @@ object RepeatablesSpecJVM extends Scalaprops {
     Gen[UnknownFieldSet]
   })
   import g._
-  val `UnknownFieldSet same as java` = {
+  property("UnknownFieldSet same as java") = {
     val javaPrinter = com.google.protobuf.util.JsonFormat.printer()
     val companion = implicitly[GeneratedMessageCompanion[RepeatablesTest]]
       .asInstanceOf[JavaProtoSupport[RepeatablesTest, com.google.protobuf.GeneratedMessageV3]]
